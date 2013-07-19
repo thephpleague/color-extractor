@@ -1,6 +1,6 @@
 <?php
 
-namespace MatTheCat;
+namespace MatTheCat\ColorExtractor;
 
 class ColorExtractor
 {
@@ -28,9 +28,9 @@ class ColorExtractor
                         );
                     }
                 }
-            } while($y++ < $h);
+            } while(++$y < $h);
             $y = 0;
-        } while($x++ < $w);
+        } while(++$x < $w);
 
         uasort($colors, function($firstColor, $secondColor) {
             $diff = $firstColor['saturation']*$firstColor['count'] - $secondColor['saturation']*$secondColor['count'];
