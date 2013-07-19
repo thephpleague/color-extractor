@@ -19,7 +19,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-0": {
-            "MatTheCat\\": "colorextractor/"
+            "MatTheCat\\": ""
         }
     }
 }
