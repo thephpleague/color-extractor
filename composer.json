@@ -1,0 +1,25 @@
+{
+    "name": "matthecat/colorextractor",
+    "type": "library",
+    "description": "Extract colors from an image like a human would do.",
+    "keywords": ["image", "color", "extract", "palette", "human"],
+    "homepage": "https://github.com/MatTheCat/ColorExtractor",
+    "license": "Unlicense",
+    "authors": [
+        {
+            "name": "Mathieu Lechat",
+            "email": "math.lechat@gmail.com",
+            "homepage": "http://matthecat.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.0.0"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "MatTheCat\\": ""
+        }
+    }
+}
