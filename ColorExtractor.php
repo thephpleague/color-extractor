@@ -118,9 +118,10 @@ class ColorExtractor
     protected static function getColorSaturation(array $sRGBComponents)
     {
         $max = max($sRGBComponents);
-        return $max ?
-            ($max - min($sRGBComponents))/$max :
-            0;
+        $min = min($sRGBComponents);
+        $diff = $max - $min;
+        $sum = $max + $min;
+        return $sum/2 > .5 ? $diff/(2 - $diff) : $diff/$sum;
     }
 
     protected static function getSRGBComponents($RGBComponents)
