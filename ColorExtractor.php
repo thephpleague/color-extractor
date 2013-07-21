@@ -4,7 +4,7 @@ namespace MatTheCat\ColorExtractor;
 
 class ColorExtractor
 {
-    public static function extract($imageResource, $maxPaletteSize = 1, $minColorRatio = .01, $minSaturation = 0)
+    public static function extract($imageResource, $maxPaletteSize = 1, $minColorRatio = 0, $minSaturation = 0)
     {
         $w = imagesx($imageResource);
         $h = imagesy($imageResource);
