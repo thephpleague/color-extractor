@@ -15,7 +15,9 @@ class ColorExtractor
 
         do {
             do {
-                $color = imagecolorat($imageResource, $x, $y);
+                $rgba = imagecolorsforindex($imageResource, imagecolorat($imageResource, $x, $y));
+                $rgb = array($rgba['red'], $rgba['green'], $rgba['blue']);
+                $color = hexdec(sprintf('%02X%02X%02X', $rgb[0], $rgb[1], $rgb[2]));
                 if(array_key_exists($color, $colors)) {
                     $colors[$color]['count']++;
                 }
