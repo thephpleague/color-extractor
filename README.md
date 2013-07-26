@@ -29,7 +29,7 @@ Parameters
     <tbody>
         <tr>
             <td>imageResource</td>
-            <td>image resource identifier, as returned by [imagecreatefromjpeg](http://www.php.net/manual/en/function.imagecreatefromjpeg.php)</td>
+            <td>image resource identifier, as returned by <a href="http://www.php.net/manual/en/function.imagecreatefromjpeg.php">imagecreatefromjpeg</a></td>
             <td>-</td>
         </tr>
         <tr>
