@@ -89,11 +89,8 @@ class ColorExtractor
 
     protected static function toHex($color)
     {
-        $hex = '#';
-        foreach(self::getRGBComponents($color) as $component) {
-            $hex.=sprintf('%02X', $component);
-        }
-        return $hex;
+        $rgb = self::getRGBComponents($color);
+        return sprintf('#%02X%02X%02X', $rgb[0], $rgb[1], $rgb[2]);
     }
 
     protected static function getLabFromColor($color)
