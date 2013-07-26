@@ -4,7 +4,7 @@
     "description": "Extract colors from an image like a human would do.",
     "keywords": ["image", "color", "extract", "palette", "human"],
     "homepage": "https://github.com/MatTheCat/ColorExtractor",
-    "license": "Unlicense",
+    "license": "WTFPL",
     "authors": [
         {
             "name": "Mathieu Lechat",
