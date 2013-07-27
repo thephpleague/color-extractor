@@ -22,7 +22,7 @@ class ColorExtractor
                     $colors[$color]['count']++;
                 }
                 else {
-                    $saturation = self::getColorSaturation(self::getSRGBComponents(self::getRGBComponents($color)));
+                    $saturation = self::getColorSaturation(self::getSRGBComponents($rgb));
                     if($saturation >= $minSaturation) {
                         $colors[$color] = array(
                             'count' => 1,
