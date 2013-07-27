@@ -56,18 +56,36 @@ class ColorExtractor
                     next($colors);
                 }
                 $refColor = key($colors);
+                $refColorData = current($colors);
 
                 if(current($colors)['count'] <= $minCountAllowed) {
                     break;
                 }
 
+                if(array_key_exists('Lab', $refColorData)) {
+                    $refLab = $refColorData['Lab'];
+                }
+                else {
+                    $refLab = self::getLabFromColor($refColor);
+                    $colors[$refColor]['Lab'] = $refLab;
+                }
+
                 while($j++ < $maxPaletteSize) {
-                    next($colors);
+                    $cmpColorData = next($colors);
                     $cmpColor = key($colors);
                     if(current($colors)['count'] <= $minCountAllowed) {
                         break;
                     }
-                    if(self::CIEDE2000DeltaE(self::getLabFromColor($refColor), self::getLabFromColor($cmpColor)) <= $minDeltaE) {
+
+                    if(array_key_exists('Lab', $cmpColorData)) {
+                        $cmpLab = $cmpColorData['Lab'];
+                    }
+                    else {
+                        $cmpLab = self::getLabFromColor($cmpColor);
+                        $colors[$cmpColor]['Lab'] = $cmpLab;
+                    }
+
+                    if(self::CIEDE2000DeltaE($refLab, $cmpLab) <= $minDeltaE) {
                         $j--;
                         prev($colors);
                         unset($colors[$cmpColor]);
