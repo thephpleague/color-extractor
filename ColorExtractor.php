@@ -49,6 +49,7 @@ class ColorExtractor
 
         if($maxPaletteSize > 1) {
             $i = 0;
+            $mergeCount = 0;
             while($i++ < $maxPaletteSize) {
                 $j = 0;
                 reset($colors);
@@ -70,6 +71,14 @@ class ColorExtractor
                     $colors[$refColor]['Lab'] = $refLab;
                 }
 
+                if($mergeCount) {
+                    $offset = max($i, $maxPaletteSize - $mergeCount - 1);
+                    while($j++ < $offset) {
+                        next($colors);
+                    }
+                    $mergeCount = 0;
+                }
+
                 while($j++ < $maxPaletteSize) {
                     $cmpColorData = next($colors);
                     $cmpColor = key($colors);
@@ -87,6 +96,7 @@ class ColorExtractor
 
                     if(self::CIEDE2000DeltaE($refLab, $cmpLab) <= $minDeltaE) {
                         $j--;
+                        $mergeCount++;
                         prev($colors);
                         unset($colors[$cmpColor]);
                         if($i > 1) {
