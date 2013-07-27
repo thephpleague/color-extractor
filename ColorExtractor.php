@@ -80,9 +80,7 @@ class ColorExtractor
             $paletteSize = max(1, $i - 1);
         }
         return array_map(
-            function($color) {
-                return self::toHex($color);
-            },
+            array(__CLASS__, 'toHex'),
             array_keys(array_slice($colors, 0, $paletteSize, true))
         );
     }
