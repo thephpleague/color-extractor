@@ -1,5 +1,5 @@
 {
-    "name": "matthecat/colorextractor",
+    "name": "league/colorextractor",
     "type": "library",
     "description": "Extract colors from an image like a human would do.",
     "keywords": ["image", "color", "extract", "palette", "human"],

@@ -1,6 +1,6 @@
 <?php
 
-namespace MatTheCat\ColorExtractor;
+namespace League\ColorExtractor;
 
 class ColorExtractor
 {
