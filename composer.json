@@ -1,9 +1,9 @@
 {
     "name": "league/colorextractor",
     "type": "library",
-    "description": "Extract colors from an image like a human would do.",
+    "description": "Extract colors from an image as a human would do.",
     "keywords": ["image", "color", "extract", "palette", "human"],
-    "homepage": "https://github.com/MatTheCat/ColorExtractor",
+    "homepage": "https://github.com/php-loep/color-extractor",
     "license": "WTFPL",
     "authors": [
         {
@@ -14,10 +14,12 @@
         }
     ],
     "require": {
-        "php": ">=5.0.0"
+        "php": ">=5.3.0"
     },
-    "minimum-stability": "dev",
     "autoload": {
-        "classmap": ["ColorExtractor.php"]
-    }
+        "psr-0": {
+            "League\\ColorExtractor": ["src", "tests"]
+        }
+    },
+    "minimum-stability": "dev"
 }

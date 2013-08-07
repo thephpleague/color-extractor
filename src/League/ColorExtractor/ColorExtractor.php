@@ -18,21 +18,21 @@ class ColorExtractor
                 $rgba = imagecolorsforindex($imageResource, imagecolorat($imageResource, $x, $y));
                 $rgb = array($rgba['red'], $rgba['green'], $rgba['blue']);
                 $color = hexdec(sprintf('%02X%02X%02X', $rgb[0], $rgb[1], $rgb[2]));
-                if(array_key_exists($color, $colors)) {
+                if (array_key_exists($color, $colors)) {
                     $colors[$color]['count']++;
                 }
                 else {
                     $saturation = self::getColorSaturation(self::getSRGBComponents($rgb));
-                    if($saturation >= $minSaturation) {
+                    if ($saturation >= $minSaturation) {
                         $colors[$color] = array(
                             'count' => 1,
                             'saturation' => $saturation
                         );
                     }
                 }
-            } while(++$y < $h);
+            } while (++$y < $h);
             $y = 0;
-        } while(++$x < $w);
+        } while (++$x < $w);
 
         uasort($colors, function($firstColor, $secondColor) {
             $diff = $firstColor['saturation']*$firstColor['count'] - $secondColor['saturation']*$secondColor['count'];
@@ -47,46 +47,45 @@ class ColorExtractor
         $minCountAllowed = $totalColorCount*$minColorRatio;
         $paletteSize = 1;
 
-        if($maxPaletteSize > 1) {
+        if ($maxPaletteSize > 1) {
             $i = 0;
             $mergeCount = 0;
-            while($i++ < $maxPaletteSize) {
+            while ($i++ < $maxPaletteSize) {
                 $j = 0;
                 reset($colors);
-                while(++$j < $i) {
+                while (++$j < $i) {
                     next($colors);
                 }
                 $refColor = key($colors);
                 $refColorData = current($colors);
 
-                if(current($colors)['count'] <= $minCountAllowed) {
+                if (current($colors)['count'] <= $minCountAllowed) {
                     break;
                 }
 
-                if(array_key_exists('Lab', $refColorData)) {
+                if (array_key_exists('Lab', $refColorData)) {
                     $refLab = $refColorData['Lab'];
-                }
-                else {
+                } else {
                     $refLab = self::getLabFromColor($refColor);
                     $colors[$refColor]['Lab'] = $refLab;
                 }
 
-                if($mergeCount) {
+                if ($mergeCount) {
                     $offset = max($i, $maxPaletteSize - $mergeCount - 1);
-                    while($j++ < $offset) {
+                    while ($j++ < $offset) {
                         next($colors);
                     }
                     $mergeCount = 0;
                 }
 
-                while($j++ < $maxPaletteSize) {
+                while ($j++ < $maxPaletteSize) {
                     $cmpColorData = next($colors);
                     $cmpColor = key($colors);
-                    if(current($colors)['count'] <= $minCountAllowed) {
+                    if (current($colors)['count'] <= $minCountAllowed) {
                         break;
                     }
 
-                    if(array_key_exists('Lab', $cmpColorData)) {
+                    if (array_key_exists('Lab', $cmpColorData)) {
                         $cmpLab = $cmpColorData['Lab'];
                     }
                     else {
@@ -94,12 +93,12 @@ class ColorExtractor
                         $colors[$cmpColor]['Lab'] = $cmpLab;
                     }
 
-                    if(self::CIEDE2000DeltaE($refLab, $cmpLab) <= $minDeltaE) {
+                    if (self::CIEDE2000DeltaE($refLab, $cmpLab) <= $minDeltaE) {
                         $j--;
                         $mergeCount++;
                         prev($colors);
                         unset($colors[$cmpColor]);
-                        if($i > 1) {
+                        if ($i > 1) {
                             $i = 0;
                         }
                     }
@@ -215,16 +214,13 @@ class ColorExtractor
         $LpDelta = $L2 - $L1;
         $CpDelta = $C2p - $C1p;
 
-        if($C1p*$C2p == 0) {
+        if ($C1p*$C2p == 0) {
             $hpDelta = 0;
-        }
-        elseif(abs($h2p - $h1p) <= 180) {
+        } elseif (abs($h2p - $h1p) <= 180) {
             $hpDelta = $h2p - $h1p;
-        }
-        elseif($h2p - $h1p > 180) {
+        } elseif ($h2p - $h1p > 180) {
             $hpDelta = $h2p - $h1p - 360;
-        }
-        else {
+        } else {
             $hpDelta = $h2p - $h1p + 360;
         }
 
@@ -233,16 +229,13 @@ class ColorExtractor
         $Lbp = ($L1 + $L2)/2;
         $Cbp = ($C1p + $C2p)/2;
 
-        if($C1p*$C2p == 0) {
+        if ($C1p*$C2p == 0) {
             $hbp = $h1p + $h2p;
-        }
-        elseif(abs($h1p - $h2p) <= 180) {
+        } elseif (abs($h1p - $h2p) <= 180) {
             $hbp = ($h1p + $h2p)/2;
-        }
-        elseif($h1p + $h2p < 360) {
+        } elseif ($h1p + $h2p < 360) {
             $hbp = ($h1p + $h2p + 360)/2;
-        }
-        else {
+        } else {
             $hbp = ($h1p + $h2p - 360)/2;
         }
 
