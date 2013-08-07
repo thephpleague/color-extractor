@@ -1,5 +1,5 @@
 {
-    "name": "league/color-extractor",
+    "name": "league/colorextractor",
     "type": "library",
     "description": "Extract colors from an image as a human would do.",
     "keywords": ["image", "color", "extract", "palette", "human"],
