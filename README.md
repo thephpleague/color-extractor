@@ -12,7 +12,7 @@ Via Composer
 
     {
         "require": {
-            "league/colorextractor": ">=0.1"
+            "league/color-extractor": ">=0.1"
         }
     }
 
