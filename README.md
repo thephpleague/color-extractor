@@ -1,8 +1,8 @@
 ColorExtractor
 ==============
 
-[![Total Downloads](https://poser.pugx.org/league/colorextractor/downloads.png)](https://packagist.org/packages/league/colorextractor)
-[![Latest Stable Version](https://poser.pugx.org/league/colorextractor/v/stable.png)](https://packagist.org/packages/league/colorextractor)
+[![Total Downloads](https://poser.pugx.org/league/color-extractor/downloads.png)](https://packagist.org/packages/league/color-extractor)
+[![Latest Stable Version](https://poser.pugx.org/league/color-extractor/v/stable.png)](https://packagist.org/packages/league/color-extractor)
 
 Extract colors from an image like a human would do.
 
@@ -12,7 +12,7 @@ Via Composer
 
     {
         "require": {
-            "league/colorextractor": ">=0.1"
+            "league/color-extractor": ">=0.1"
         }
     }
 
@@ -33,7 +33,7 @@ $palette = ColorExtractor::extract(array(
     'maxPaletteSize' => 3,
 
     // Minimum ratio below colors are ignored (0 - 1)
-    // Default 0
+    // Default: 0
     'minColorRatio' => 0.5,
 ));
 
@@ -43,8 +43,8 @@ var_dump($palatte);
 
 ## TODO
 
-- ~~Full Unit Test Coverage~~
-- ~~Exception Handlers~~
+- Full Unit Test Coverage
+- Exception Handlers
 - Extensive Documentation
 - Silex/Laravel Service Providers
 

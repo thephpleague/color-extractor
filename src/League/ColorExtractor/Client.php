@@ -2,7 +2,7 @@
 
 namespace League\ColorExtractor;
 
-class ColorExtractor
+class Client
 {
     public static function extract($imageResource, $maxPaletteSize = 1, $minColorRatio = 0, $minSaturation = 0)
     {
@@ -59,7 +59,7 @@ class ColorExtractor
                 $refColor = key($colors);
                 $refColorData = current($colors);
 
-                if (current($colors)['count'] <= $minCountAllowed) {
+                if ($refColorData['count'] <= $minCountAllowed) {
                     break;
                 }
 
@@ -81,7 +81,7 @@ class ColorExtractor
                 while ($j++ < $maxPaletteSize) {
                     $cmpColorData = next($colors);
                     $cmpColor = key($colors);
-                    if (current($colors)['count'] <= $minCountAllowed) {
+                    if ($colors[$cmpColor]['count'] <= $minCountAllowed) {
                         break;
                     }
 
@@ -143,7 +143,15 @@ class ColorExtractor
         $min = min($sRGBComponents);
         $diff = $max - $min;
         $sum = $max + $min;
-        return $sum/2 > .5 ? $diff/(2 - $diff) : $diff/$sum;
+
+        // No division by zero please
+        if ($diff == 0 or $sum == 0) {
+            return 0;
+        } elseif ($sum / 2 > .5) {
+            return $diff / (2 - $diff);
+        } else { 
+            return $diff / $sum;
+        }
     }
 
     protected static function getSRGBComponents($RGBComponents)
