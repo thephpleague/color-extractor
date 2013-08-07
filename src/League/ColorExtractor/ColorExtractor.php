@@ -59,7 +59,7 @@ class ColorExtractor
                 $refColor = key($colors);
                 $refColorData = current($colors);
 
-                if (current($colors)['count'] <= $minCountAllowed) {
+                if ($refColorData['count'] <= $minCountAllowed) {
                     break;
                 }
 
