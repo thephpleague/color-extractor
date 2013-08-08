@@ -1,8 +1,8 @@
 ColorExtractor
 ==============
 
-[![Tota[![Build Status](https://travis-ci.org/php-loep/color-extractor.png?branch=master)](https://travis-ci.org/php-loep/color-extractor)
-l Downloads](https://poser.pugx.org/league/color-extractor/downloads.png)](https://packagist.org/packages/league/color-extractor)
+[![Build Status](https://travis-ci.org/php-loep/color-extractor.png?branch=master)](https://travis-ci.org/php-loep/color-extractor)
+[![Total Downloads](https://poser.pugx.org/league/color-extractor/downloads.png)](https://packagist.org/packages/league/color-extractor)
 [![Latest Stable Version](https://poser.pugx.org/league/color-extractor/v/stable.png)](https://packagist.org/packages/league/color-extractor)
 
 Extract colors from an image like a human would do.
