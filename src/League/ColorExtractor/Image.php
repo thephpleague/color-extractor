@@ -1,6 +1,4 @@
-<?php
-
-namespace League\ColorExtractor;
+<?php namespace League\ColorExtractor;
 
 class Image
 {
