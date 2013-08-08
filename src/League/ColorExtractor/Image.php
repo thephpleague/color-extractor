@@ -79,7 +79,7 @@ class Image
         uasort(
             $colors,
             function ($firstColor, $secondColor) {
-                $diff = ($firstColor['saturation'] * $firstColor['count']) 
+                $diff = ($firstColor['saturation'] * $firstColor['count'])
                     - ($secondColor['saturation'] * $secondColor['count']);
 
                 return ! $diff ?
@@ -195,7 +195,7 @@ class Image
             return 0;
         } elseif ($sum / 2 > .5) {
             return $diff / (2 - $diff);
-        } else { 
+        } else {
             return $diff / $sum;
         }
     }
