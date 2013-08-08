@@ -1,7 +1,8 @@
 ColorExtractor
 ==============
 
-[![Total Downloads](https://poser.pugx.org/league/color-extractor/downloads.png)](https://packagist.org/packages/league/color-extractor)
+[![Tota[![Build Status](https://travis-ci.org/php-loep/color-extractor.png?branch=master)](https://travis-ci.org/php-loep/color-extractor)
+l Downloads](https://poser.pugx.org/league/color-extractor/downloads.png)](https://packagist.org/packages/league/color-extractor)
 [![Latest Stable Version](https://poser.pugx.org/league/color-extractor/v/stable.png)](https://packagist.org/packages/league/color-extractor)
 
 Extract colors from an image like a human would do.
@@ -21,31 +22,32 @@ Via Composer
 ```php
 include 'vendor/autoload.php';
 
-use League\ColorExtractor;
+use League\ColorExtractor\Client as ColorExtractor;
 
-$palette = ColorExtractor::extract(array(
-    
-    // Image resource identifier, as returned by imagecreatefromjpeg()
-    'imageResource' => 'foo',
+$client = new ColorExtractor;
 
-    // Maximum size of the colors array returned by ColorExtractor::extract
-    // Default: 1
-    'maxPaletteSize' => 3,
+$image = $client->loadPng('./some/image.png');
 
-    // Minimum ratio below colors are ignored (0 - 1)
-    // Default: 0
-    'minColorRatio' => 0.5,
-));
+// Get the most used color hex code
+$palatte = $image->extract();
 
-// Returns an array with hexadecimal codes of dominant colors.
-var_dump($palatte);
+// Get three most used color hex code
+$palatte = $image->extract(3);
+
+// Change the Minimum Color Ratio (0 - 1)
+// Default: 0
+$image->setMinColorRatio(1);
+$palatte = $image->extract();
+
+// Change the Minimum saturation level. Below colors are ignored (0 - 1)
+// Default: 0
+$image->setMinColorRatio();
+$palatte = $image->extract();
+
 ```
 
 ## TODO
 
-- Full Unit Test Coverage
-- Exception Handlers
-- Extensive Documentation
 - Silex/Laravel Service Providers
 
 
