@@ -64,7 +64,7 @@ class Image
                 if (array_key_exists($color, $colors)) {
                     $colors[$color]['count']++;
                 } else {
-                    $saturation = self::getColorSaturation(self::getSRGBComponents($rgb));
+                    $saturation = $this->getColorSaturation($this->getSRGBComponents($rgb));
                     if ($saturation >= $this->minSaturation) {
                         $colors[$color] = array(
                             'count' => 1,
@@ -77,10 +77,12 @@ class Image
         } while (++$x < $w);
 
         uasort(
-            $colors, 
+            $colors,
             function ($firstColor, $secondColor) {
-                $diff = $firstColor['saturation']*$firstColor['count'] - $secondColor['saturation']*$secondColor['count'];
-                return !$diff ?
+                $diff = ($firstColor['saturation'] * $firstColor['count']) 
+                    - ($secondColor['saturation'] * $secondColor['count']);
+
+                return ! $diff ?
                     ($firstColor['saturation'] > $secondColor['saturation'] ? 1 : -1) :
                     ($diff < 0 ? 1 : -1);
             }
@@ -111,7 +113,7 @@ class Image
                 if (array_key_exists('Lab', $refColorData)) {
                     $refLab = $refColorData['Lab'];
                 } else {
-                    $refLab = self::getLabFromColor($refColor);
+                    $refLab = $this->getLabFromColor($refColor);
                     $colors[$refColor]['Lab'] = $refLab;
                 }
 
@@ -133,11 +135,11 @@ class Image
                     if (array_key_exists('Lab', $cmpColorData)) {
                         $cmpLab = $cmpColorData['Lab'];
                     } else {
-                        $cmpLab = self::getLabFromColor($cmpColor);
+                        $cmpLab = $this->getLabFromColor($cmpColor);
                         $colors[$cmpColor]['Lab'] = $cmpLab;
                     }
 
-                    if (self::Ciede2000DeltaE($refLab, $cmpLab) <= $minDeltaE) {
+                    if ($this->ciede2000DeltaE($refLab, $cmpLab) <= $minDeltaE) {
                         $j--;
                         $mergeCount++;
                         prev($colors);
@@ -158,18 +160,18 @@ class Image
 
     protected function toHex($color)
     {
-        $rgb = self::getRGBComponents($color);
+        $rgb = $this->getRGBComponents($color);
         return sprintf('#%02X%02X%02X', $rgb[0], $rgb[1], $rgb[2]);
     }
 
     protected function getLabFromColor($color)
     {
-        return self::getLabFromSRGB(self::getSRGBComponents(self::getRGBComponents($color)));
+        return $this->getLabFromSRGB($this->getSRGBComponents($this->getRGBComponents($color)));
     }
 
     protected function getLabFromSRGB($sRGBComponents)
     {
-        return self::getLabComponents(self::getXYZComponents($sRGBComponents));
+        return $this->getLabComponents($this->getXYZComponents($sRGBComponents));
     }
 
     protected function getRGBComponents($color)
@@ -201,9 +203,9 @@ class Image
     protected function getSRGBComponents($RGBComponents)
     {
         return array(
-            self::getSRGBComponent($RGBComponents[0]),
-            self::getSRGBComponent($RGBComponents[1]),
-            self::getSRGBComponent($RGBComponents[2])
+            $this->getSRGBComponent($RGBComponents[0]),
+            $this->getSRGBComponent($RGBComponents[1]),
+            $this->getSRGBComponent($RGBComponents[2])
         );
     }
 
@@ -228,22 +230,22 @@ class Image
     protected function getLabComponents($XYZComponents)
     {
         list($x, $y, $z) = $XYZComponents;
-        $fY = $this->XyzToLabStep($y);
+        $fY = $this->xyzToLabStep($y);
         return array(
             116*$fY - 16,
-            500*($this->XyzToLabStep($x) - $fY),
-            200*($fY - $this->XyzToLabStep($z))
+            500*($this->xyzToLabStep($x) - $fY),
+            200*($fY - $this->xyzToLabStep($z))
         );
     }
 
-    protected function XyzToLabStep($XYZComponent)
+    protected function xyzToLabStep($XYZComponent)
     {
         return $XYZComponent > pow(6/29, 3) ?
             pow($XYZComponent, 1/3) :
             (1/3)*pow(29/6, 2)*$XYZComponent + (4/29);
     }
 
-    protected function Ciede2000DeltaE($firstLabColor, $secondLabColor)
+    protected function ciede2000DeltaE($firstLabColor, $secondLabColor)
     {
         list($L1, $a1, $b1) = $firstLabColor;
         list($L2, $a2, $b2) = $secondLabColor;
