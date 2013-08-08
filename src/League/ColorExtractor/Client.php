@@ -18,5 +18,4 @@ class Client
     {
         return new Image(imagecreatefromgif($imagePath));
     }
-
 }
