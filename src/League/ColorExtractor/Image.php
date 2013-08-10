@@ -68,11 +68,12 @@ class Image
         arsort($colors, SORT_NUMERIC);
 
         $maxPaletteSize = min($maxPaletteSize, $totalColorCount);
-        $minDeltaE = 100/($maxPaletteSize + 1);
         $paletteSize = 1;
-        $LabCache = array();
 
         if ($maxPaletteSize > 1) {
+            $minDeltaE = 100/($maxPaletteSize + 1);
+            $LabCache = array();
+
             $i = 0;
             $mergeCount = 0;
             while ($i++ < $maxPaletteSize) {
@@ -83,11 +84,8 @@ class Image
                 }
                 $refColor = key($colors);
 
-                if (array_key_exists($refColor, $LabCache)) {
-                    $refLab = $LabCache[$refColor];
-                } else {
-                    $refLab = $this->getLabFromColor($refColor);
-                    $LabCache[$refColor] = $refLab;
+                if (!array_key_exists($refColor, $LabCache)) {
+                    $LabCache[$refColor] = $this->getLabFromColor($refColor);
                 }
 
                 if ($mergeCount) {
@@ -100,14 +98,11 @@ class Image
                     next($colors);
                     $cmpColor = key($colors);
 
-                    if (array_key_exists($cmpColor, $LabCache)) {
-                        $cmpLab = $LabCache[$cmpColor];
-                    } else {
-                        $cmpLab = $this->getLabFromColor($cmpColor);
-                        $LabCache[$cmpColor] = $cmpLab;
+                    if (!array_key_exists($cmpColor, $LabCache)) {
+                        $LabCache[$cmpColor] = $this->getLabFromColor($cmpColor);
                     }
 
-                    if ($this->ciede2000DeltaE($refLab, $cmpLab) <= $minDeltaE) {
+                    if ($this->ciede2000DeltaE($LabCache[$refColor], $LabCache[$cmpColor]) <= $minDeltaE) {
                         $j--;
                         $mergeCount++;
                         prev($colors);
