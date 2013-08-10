@@ -4,20 +4,15 @@ namespace League\ColorExtractor;
 
 class Image
 {
-    /** 
+    /**
      * @var resource Image resource identifier, as returned by imagecreatefromjpeg()
      */
     protected $imageResource;
 
-    /** 
+    /**
      * @var int Minimum ratio, below colors are ignored (0 - 1)
      */
     protected $minColorRatio = 0;
-
-    /** 
-     * @var int Minimum saturation level, below colors are ignored (0 - 1)
-     */
-    protected $minSaturation = 0;
 
     public function __construct($imageResource)
     {
@@ -27,23 +22,13 @@ class Image
     public function setMinColorRatio($minColorRatio)
     {
         $this->minColorRatio = $minColorRatio;
+
         return $this;
     }
 
-    public function getMinColorRatio($minColorRatio)
+    public function getMinColorRatio()
     {
         return $this->minColorRatio;
-    }
-
-    public function setMinSaturation($minSaturation)
-    {
-        $this->minSaturation = $minSaturation;
-        return $this;
-    }
-
-    public function getMinSaturation($minSaturation)
-    {
-        return $this->minSaturation;
     }
 
     public function extract($maxPaletteSize = 1)
@@ -58,41 +43,34 @@ class Image
         do {
             do {
                 $rgba = imagecolorsforindex($this->imageResource, imagecolorat($this->imageResource, $x, $y));
-                $rgb = array($rgba['red'], $rgba['green'], $rgba['blue']);
-                $color = hexdec(sprintf('%02X%02X%02X', $rgb[0], $rgb[1], $rgb[2]));
-                
+                $color = hexdec(sprintf('%02X%02X%02X', $rgba['red'], $rgba['green'], $rgba['blue']));
+
                 if (array_key_exists($color, $colors)) {
-                    $colors[$color]['count']++;
+                    $colors[$color]++;
                 } else {
-                    $saturation = $this->getColorSaturation($this->getSRGBComponents($rgb));
-                    if ($saturation >= $this->minSaturation) {
-                        $colors[$color] = array(
-                            'count' => 1,
-                            'saturation' => $saturation
-                        );
-                    }
+                    $colors[$color] = 1;
                 }
             } while (++$y < $h);
             $y = 0;
         } while (++$x < $w);
 
-        uasort(
-            $colors,
-            function ($firstColor, $secondColor) {
-                $diff = ($firstColor['saturation'] * $firstColor['count'])
-                    - ($secondColor['saturation'] * $secondColor['count']);
-
-                return ! $diff ?
-                    ($firstColor['saturation'] > $secondColor['saturation'] ? 1 : -1) :
-                    ($diff < 0 ? 1 : -1);
-            }
-        );
-
         $totalColorCount = count($colors);
+        $minCountAllowed = $totalColorCount * $this->minColorRatio;
+
+        foreach ($colors as $color => &$data) {
+            if ($data < $minCountAllowed) {
+                unset($colors[$color]);
+            } else {
+                $data = $this->getColorScore($color, $data, $totalColorCount);
+            }
+        }
+
+        arsort($colors, SORT_NUMERIC);
+
         $maxPaletteSize = min($maxPaletteSize, $totalColorCount);
         $minDeltaE = 100/($maxPaletteSize + 1);
-        $minCountAllowed = $totalColorCount * $this->minColorRatio;
         $paletteSize = 1;
+        $LabCache = array();
 
         if ($maxPaletteSize > 1) {
             $i = 0;
@@ -104,17 +82,12 @@ class Image
                     next($colors);
                 }
                 $refColor = key($colors);
-                $refColorData = current($colors);
 
-                if ($refColorData['count'] <= $minCountAllowed) {
-                    break;
-                }
-
-                if (array_key_exists('Lab', $refColorData)) {
-                    $refLab = $refColorData['Lab'];
+                if (array_key_exists($refColor, $LabCache)) {
+                    $refLab = $LabCache[$refColor];
                 } else {
                     $refLab = $this->getLabFromColor($refColor);
-                    $colors[$refColor]['Lab'] = $refLab;
+                    $LabCache[$refColor] = $refLab;
                 }
 
                 if ($mergeCount) {
@@ -123,20 +96,15 @@ class Image
                         next($colors);
                     }
                     $mergeCount = 0;
-                }
-
-                while ($j++ < $maxPaletteSize) {
-                    $cmpColorData = next($colors);
+                } while ($j++ <= $maxPaletteSize) {
+                    next($colors);
                     $cmpColor = key($colors);
-                    if ($colors[$cmpColor]['count'] <= $minCountAllowed) {
-                        break;
-                    }
 
-                    if (array_key_exists('Lab', $cmpColorData)) {
-                        $cmpLab = $cmpColorData['Lab'];
+                    if (array_key_exists($cmpColor, $LabCache)) {
+                        $cmpLab = $LabCache[$cmpColor];
                     } else {
                         $cmpLab = $this->getLabFromColor($cmpColor);
-                        $colors[$cmpColor]['Lab'] = $cmpLab;
+                        $LabCache[$cmpColor] = $cmpLab;
                     }
 
                     if ($this->ciede2000DeltaE($refLab, $cmpLab) <= $minDeltaE) {
@@ -152,6 +120,7 @@ class Image
             }
             $paletteSize = max(1, $i - 1);
         }
+
         return array_map(
             array(__CLASS__, 'toHex'),
             array_keys(array_slice($colors, 0, $paletteSize, true))
@@ -161,6 +130,7 @@ class Image
     protected function toHex($color)
     {
         $rgb = $this->getRGBComponents($color);
+
         return sprintf('#%02X%02X%02X', $rgb[0], $rgb[1], $rgb[2]);
     }
 
@@ -183,21 +153,19 @@ class Image
         );
     }
 
-    protected function getColorSaturation(array $sRGBComponents)
+    protected function getColorScore($color, $count, $colorsCount)
     {
+        $sRGBComponents = self::getSRGBComponents(self::getRGBComponents($color));
         $max = max($sRGBComponents);
         $min = min($sRGBComponents);
         $diff = $max - $min;
         $sum = $max + $min;
+        $saturation = $diff ? ($sum/2 > .5 ? $diff/(2 - $diff) : $diff/$sum) : 0;
+        $luminosity = ($sum/2 + .2126*$sRGBComponents[0] + .7152*$sRGBComponents[1] + .0722*$sRGBComponents[2])/2;
 
-        // No division by zero please
-        if ($diff == 0 or $sum == 0) {
-            return 0;
-        } elseif ($sum / 2 > .5) {
-            return $diff / (2 - $diff);
-        } else {
-            return $diff / $sum;
-        }
+        return $saturation < .5 ?
+            (1 - $luminosity)*$count/$colorsCount :
+            $count*($saturation)*$luminosity;
     }
 
     protected function getSRGBComponents($RGBComponents)
@@ -212,6 +180,7 @@ class Image
     protected function getSRGBComponent($component)
     {
         $component/=255;
+
         return $component <= .03928 ?
             $component/12.92 :
             pow(($component + .055)/1.055, 2.4);
@@ -220,6 +189,7 @@ class Image
     protected function getXYZComponents($sRGBComponents)
     {
         list($r, $g, $b) = $sRGBComponents;
+
         return array(
             .4124*$r + .3576*$g + .1805*$b,
             .2126*$r + .7152*$g + .0722*$b,
@@ -231,6 +201,7 @@ class Image
     {
         list($x, $y, $z) = $XYZComponents;
         $fY = $this->xyzToLabStep($y);
+
         return array(
             116*$fY - 16,
             500*($this->xyzToLabStep($x) - $fY),
