@@ -14,7 +14,7 @@ class ImageTest extends \PHPUnit_Framework_TestCase
     public function testJpegExtractSingleColor()
     {
         $this->client = new Client;
-        
+
         $image = $this->client->loadJpeg($this->jpegPath);
         $palette = $image->extract();
 
@@ -26,25 +26,25 @@ class ImageTest extends \PHPUnit_Framework_TestCase
     public function testGifExtractSingleColor()
     {
         $this->client = new Client;
-        
+
         $image = $this->client->loadGif($this->gifPath);
         $palette = $image->extract();
 
         $this->assertInternalType('array', $palette);
         $this->assertCount(1, $palette);
-        $this->assertEquals('#081122', $palette[0]);
+        $this->assertEquals('#B772DB', $palette[0]);
     }
 
     public function testPngExtractSingleColor()
     {
         $this->client = new Client;
-        
+
         $image = $this->client->loadPng($this->pngPath);
         $palette = $image->extract();
 
         $this->assertInternalType('array', $palette);
         $this->assertCount(1, $palette);
-        $this->assertEquals('#2D363F', $palette[0]);
+        $this->assertEquals('#FE6900', $palette[0]);
     }
 
     public function testJpegExtractMultipleColors()
@@ -54,14 +54,13 @@ class ImageTest extends \PHPUnit_Framework_TestCase
         $image = $this->client->loadJpeg($this->jpegPath);
 
         $numColors = 3;
-        
+
         $palette = $image->extract($numColors);
-        
+
         $this->assertInternalType('array', $palette);
         $this->assertCount($numColors, $palette);
-        $this->assertEquals($palette, array('#F3EC18', '#241B12', '#E1CF91'));
+        $this->assertEquals($palette, array('#F3EC18', '#F49225', '#E82E31'));
     }
-    
 
 /*
     public function testJpegExtractMinColorRatioHigh()
@@ -71,10 +70,10 @@ class ImageTest extends \PHPUnit_Framework_TestCase
         $image = $this->client->loadJpeg($this->jpegPath);
 
         $image->setMinColorRatio(1);
-        
+
         $numColors = 3;
         $palette = $image->extract($numColors);
-        
+
         $this->assertInternalType('array', $palette);
         $this->assertCount($numColors, $palette);
         $this->assertEquals($palette, array('#F3EC18', '#241B12', '#E1CF91'));
