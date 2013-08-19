@@ -150,7 +150,7 @@ class Image
 
     protected function getColorScore($color, $count, $colorsCount)
     {
-        $sRGBComponents = self::getSRGBComponents(self::getRGBComponents($color));
+        $sRGBComponents = $this->getSRGBComponents($this->getRGBComponents($color));
         $max = max($sRGBComponents);
         $min = min($sRGBComponents);
         $diff = $max - $min;
