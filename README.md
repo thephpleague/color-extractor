@@ -29,20 +29,17 @@ $client = new ColorExtractor;
 $image = $client->loadPng('./some/image.png');
 
 // Get the most used color hex code
-$palatte = $image->extract();
+$palette = $image->extract();
 
 // Get three most used color hex code
-$palatte = $image->extract(3);
+$palette = $image->extract(3);
 
 // Change the Minimum Color Ratio (0 - 1)
 // Default: 0
 $image->setMinColorRatio(1);
-$palatte = $image->extract();
+$palette = $image->extract();
 
-// Change the Minimum saturation level. Below colors are ignored (0 - 1)
-// Default: 0
-$image->setMinColorRatio();
-$palatte = $image->extract();
+$palette = $image->extract();
 
 ```
 
