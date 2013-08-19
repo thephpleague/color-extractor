@@ -39,8 +39,6 @@ $palette = $image->extract(3);
 $image->setMinColorRatio(1);
 $palette = $image->extract();
 
-$palette = $image->extract();
-
 ```
 
 ## TODO
