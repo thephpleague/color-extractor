@@ -11,16 +11,18 @@ Extract colors from an image like a human would do.
 
 Via Composer
 
-    {
-        "require": {
-            "league/color-extractor": ">=0.1"
-        }
+```json
+{
+    "require": {
+        "league/color-extractor": "~0.1"
     }
+}
+```
 
 ## Usage
 
 ```php
-include 'vendor/autoload.php';
+require 'vendor/autoload.php';
 
 use League\ColorExtractor\Client as ColorExtractor;
 
@@ -41,9 +43,27 @@ $palette = $image->extract();
 
 ```
 
-## TODO
+## Service Providers
 
-- Silex/Laravel Service Providers
+- Silex
+
+First register `ColorExtractorServiceProvider` in your application:
+```php
+use League\ColorExtractor\Silex\ColorExtractorServiceProvider;
+
+// ... create $app
+$app->register(new ColorExtractorServiceProvider);
+```
+
+Then you can use like this:
+
+```php
+$image = $app['colorextractor']->loadPng('./some/image.png');
+...
+$palette = $image->extract();
+```
+
+- Laravel4: coming soon...
 
 
 ## Contributing
