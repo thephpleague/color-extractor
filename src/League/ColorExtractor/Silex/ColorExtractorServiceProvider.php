@@ -16,7 +16,7 @@ class ColorExtractorServiceProvider implements ServiceProviderInterface
      */
     public function register(Application $app)
     {
-        $app['colorextractor'] = $app->share(function($app) {
+        $app['color-extractor'] = $app->share(function($app) {
             return new Client;
         });
     }

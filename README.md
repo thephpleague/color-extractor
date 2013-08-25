@@ -58,7 +58,7 @@ $app->register(new ColorExtractorServiceProvider);
 Then you can use like this:
 
 ```php
-$image = $app['colorextractor']->loadPng('./some/image.png');
+$image = $app['color-extractor']->loadPng('./some/image.png');
 ...
 $palette = $image->extract();
 ```

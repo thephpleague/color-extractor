@@ -24,7 +24,7 @@ class ColorExtractorServiceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testRegister()
     {
-        $this->assertInstanceOf('League\\ColorExtractor\\Client', $this->app['colorextractor']);
+        $this->assertInstanceOf('League\\ColorExtractor\\Client', $this->app['color-extractor']);
     }
 
     public function testBoot()
@@ -34,13 +34,13 @@ class ColorExtractorServiceProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testClient()
     {
-        $image = $this->app['colorextractor']->loadJpeg($this->jpegPath);
+        $image = $this->app['color-extractor']->loadJpeg($this->jpegPath);
         $this->assertInstanceOf('League\\ColorExtractor\\Image', $image);
 
-        $image = $this->app['colorextractor']->loadGif($this->gifPath);
+        $image = $this->app['color-extractor']->loadGif($this->gifPath);
         $this->assertInstanceOf('League\\ColorExtractor\\Image', $image);
 
-        $image = $this->app['colorextractor']->loadPng($this->pngPath);
+        $image = $this->app['color-extractor']->loadPng($this->pngPath);
         $this->assertInstanceOf('League\\ColorExtractor\\Image', $image);
     }
 }
