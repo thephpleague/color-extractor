@@ -11,16 +11,18 @@ Extract colors from an image like a human would do.
 
 Via Composer
 
-    {
-        "require": {
-            "league/color-extractor": ">=0.1"
-        }
+```json
+{
+    "require": {
+        "league/color-extractor": "~0.1"
     }
+}
+```
 
 ## Usage
 
 ```php
-include 'vendor/autoload.php';
+require 'vendor/autoload.php';
 
 use League\ColorExtractor\Client as ColorExtractor;
 
@@ -41,9 +43,54 @@ $palette = $image->extract();
 
 ```
 
-## TODO
+## Service Providers
 
-- Silex/Laravel Service Providers
+- Silex
+
+First register `ColorExtractorServiceProvider` in your application:
+```php
+use League\ColorExtractor\Silex\ColorExtractorServiceProvider;
+
+// ... create $app
+$app->register(new ColorExtractorServiceProvider);
+```
+
+Then you can use like this:
+
+```php
+$image = $app['color-extractor']->loadPng('./some/image.png');
+...
+$palette = $image->extract();
+```
+
+- Laravel 4
+
+Find the `providers` key in `app/config/app.php` and register the `ColorExtractorServiceProvider`:
+
+```php
+'providers' => array(
+    // ...
+    'League\ColorExtractor\Laravel\ColorExtractorServiceProvider',
+)
+```
+
+Then you can use it exactly the same way as the Silex service provider.
+If you prefer to use Facades, find the `aliases` key in `app/config/app.php` and register the `ColorExtractorFacade`:
+
+```php
+'aliases' => array(
+    // ...
+    'ColorExtractor' => 'League\ColorExtractor\Laravel\ColorExtractorFacade',
+)
+```
+
+Example:
+
+```php
+$image = ColorExtractor::loadPng('./some/image.png');
+...
+$palette = $image->extract();
+```
 
 
 ## Contributing
