@@ -45,7 +45,10 @@ $palette = $image->extract();
 
 ## Service Providers
 
-- Silex
+Integration with most frameworks would require a bridge package, but for Silex and Laravel 4 a 
+simple service provider will suffice. 
+
+### Silex
 
 First register `ColorExtractorServiceProvider` in your application:
 ```php
@@ -63,7 +66,7 @@ $image = $app['color-extractor']->loadPng('./some/image.png');
 $palette = $image->extract();
 ```
 
-- Laravel 4
+### Laravel 4
 
 Find the `providers` key in `app/config/app.php` and register the `ColorExtractorServiceProvider`:
 
@@ -106,4 +109,4 @@ Please see [CONTRIBUTING](https://github.com/php-loep/color-extractor/blob/maste
 
 ## License
 
-The WTFPL License (WTFPL). Please see [License File](https://github.com/php-loep/color-extractor/blob/master/LICENSE) for more information.
+The MIT License (MIT). Please see [License File](https://github.com/php-loep/color-extractor/blob/master/LICENSE) for more information.
