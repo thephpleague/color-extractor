@@ -54,12 +54,14 @@ class Image
             $y = 0;
         } while (++$x < $w);
 
-        $totalColorCount = count($colors);
-        $minCountAllowed = $totalColorCount * $this->minColorRatio;
+        $totalColorCount = $finalColorCount = count($colors);
+        $pixelCount = $w*$h;
+        $minCountAllowed = $pixelCount * $this->minColorRatio;
 
         foreach ($colors as $color => &$data) {
             if ($data < $minCountAllowed) {
                 unset($colors[$color]);
+                $finalColorCount--;
             } else {
                 $data = $this->getColorScore($color, $data, $totalColorCount);
             }
@@ -67,7 +69,7 @@ class Image
 
         arsort($colors, SORT_NUMERIC);
 
-        $maxPaletteSize = min($maxPaletteSize, $totalColorCount);
+        $maxPaletteSize = min($maxPaletteSize, $finalColorCount);
         $paletteSize = 1;
 
         if ($maxPaletteSize > 1) {
