@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Extract colors from an image as a human would do.",
     "keywords": ["image", "color", "extract", "palette", "human"],
-    "homepage": "https://github.com/php-loep/color-extractor",
+    "homepage": "https://github.com/thephpleague/color-extractor",
     "license": "MIT",
     "replace": {
         "matthecat/colorextractor": "*"
