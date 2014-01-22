@@ -1,7 +1,7 @@
 ColorExtractor
 ==============
 
-[![Build Status](https://travis-ci.org/php-loep/color-extractor.png?branch=master)](https://travis-ci.org/php-loep/color-extractor)
+[![Build Status](https://travis-ci.org/thephpleague/color-extractor.png?branch=master)](https://travis-ci.org/thephpleague/color-extractor)
 [![Total Downloads](https://poser.pugx.org/league/color-extractor/downloads.png)](https://packagist.org/packages/league/color-extractor)
 [![Latest Stable Version](https://poser.pugx.org/league/color-extractor/v/stable.png)](https://packagist.org/packages/league/color-extractor)
 
@@ -98,15 +98,15 @@ $palette = $image->extract();
 
 ## Contributing
 
-Please see [CONTRIBUTING](https://github.com/php-loep/color-extractor/blob/master/CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](https://github.com/thephpleague/color-extractor/blob/master/CONTRIBUTING.md) for details.
 
 
 ## Credits
 
 - [Mathieu Lechat](https://github.com/MatTheCat)
-- [All Contributors](https://github.com/php-loep/color-extractor/contributors)
+- [All Contributors](https://github.com/thephpleague/color-extractor/contributors)
 
 
 ## License
 
-The MIT License (MIT). Please see [License File](https://github.com/php-loep/color-extractor/blob/master/LICENSE) for more information.
+The MIT License (MIT). Please see [License File](https://github.com/thephpleague/color-extractor/blob/master/LICENSE) for more information.
