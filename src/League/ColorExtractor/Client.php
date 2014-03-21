@@ -18,4 +18,9 @@ class Client
     {
         return new Image(imagecreatefromgif($imagePath));
     }
+
+    public function loadBpm($imagePath)
+    {
+        return new Image(imagecreatefrombmp($imagePath));
+    }
 }
