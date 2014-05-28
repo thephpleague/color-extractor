@@ -14,7 +14,7 @@ Via Composer
 ```json
 {
     "require": {
-        "league/color-extractor": "~0.1"
+        "league/color-extractor": "0.1.*"
     }
 }
 ```

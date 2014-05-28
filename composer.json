@@ -21,9 +21,10 @@
         "ext-gd": "*"
     },
     "require-dev": {
+        "illuminate/support": "~4.1",
+        "orchestra/testbench": "~2.0",
         "silex/silex": "~1.1",
-        "illuminate/support": "~4.0",
-        "orchestra/testbench": "~2.0"
+        "squizlabs/php_codesniffer": "~1.5"
     },
     "autoload": {
         "psr-0": {
