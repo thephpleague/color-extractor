@@ -69,16 +69,15 @@ class Image
 
         arsort($colors, SORT_NUMERIC);
 
-        $maxPaletteSize = min($maxPaletteSize, $finalColorCount);
-        $paletteSize = 1;
+        $paletteSize = min($maxPaletteSize, $finalColorCount);
 
-        if ($maxPaletteSize > 1) {
-            $minDeltaE = 100/($maxPaletteSize + 1);
+        if ($finalColorCount > $maxPaletteSize) {
+            $minDeltaE = 100/($paletteSize + 1);
             $LabCache = array();
 
             $i = 0;
             $mergeCount = 0;
-            while ($i++ < $maxPaletteSize) {
+            while ($i++ < $paletteSize) {
                 $j = 0;
                 reset($colors);
                 while (++$j < $i) {
@@ -91,12 +90,12 @@ class Image
                 }
 
                 if ($mergeCount) {
-                    $offset = max($i, $maxPaletteSize - $mergeCount - 1);
+                    $offset = max($i, $paletteSize - $mergeCount - 1);
                     while ($j++ < $offset) {
                         next($colors);
                     }
                     $mergeCount = 0;
-                } while ($j++ <= $maxPaletteSize) {
+                } while ($j++ <= $paletteSize) {
                     next($colors);
                     $cmpColor = key($colors);
 
@@ -115,7 +114,6 @@ class Image
                     }
                 }
             }
-            $paletteSize = max(1, $i - 1);
         }
 
         return array_map(
