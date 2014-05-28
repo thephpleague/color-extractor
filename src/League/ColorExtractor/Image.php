@@ -55,8 +55,7 @@ class Image
         } while (++$x < $w);
 
         $totalColorCount = $finalColorCount = count($colors);
-        $pixelCount = $w*$h;
-        $minCountAllowed = $pixelCount * $this->minColorRatio;
+        $minCountAllowed = $w*$h*$this->minColorRatio;
 
         foreach ($colors as $color => &$data) {
             if ($data < $minCountAllowed) {
