@@ -36,13 +36,14 @@ class Image
         $w = imagesx($this->imageResource);
         $h = imagesy($this->imageResource);
 
-        $x = $y = 0;
-
         $colors = array();
 
-        do {
-            do {
+        for ($x = 0 ; $x < $w ; $x++) {
+            for ($y = 0 ; $y < $h ; $y++) {
                 $rgba = imagecolorsforindex($this->imageResource, imagecolorat($this->imageResource, $x, $y));
+                if ($rgba['alpha'] == 127) {
+                    continue;
+                }
                 $color = hexdec(sprintf('%02X%02X%02X', $rgba['red'], $rgba['green'], $rgba['blue']));
 
                 if (array_key_exists($color, $colors)) {
@@ -50,9 +51,8 @@ class Image
                 } else {
                     $colors[$color] = 1;
                 }
-            } while (++$y < $h);
-            $y = 0;
-        } while (++$x < $w);
+            }
+        }
 
         $totalColorCount = $finalColorCount = count($colors);
         $minCountAllowed = $w*$h*$this->minColorRatio;
