@@ -24,7 +24,7 @@ class ColorExtractorServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('php-loep/color-extractor');
+        $this->package('league/color-extractor');
     }
 
     /**
