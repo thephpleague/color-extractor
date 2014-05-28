@@ -21,7 +21,7 @@
         "ext-gd": "*"
     },
     "require-dev": {
-        "illuminate/support": "~4.1",
+        "laravel/framework": "~4.1",
         "orchestra/testbench": "~2.0",
         "silex/silex": "~1.1",
         "squizlabs/php_codesniffer": "~1.5"
