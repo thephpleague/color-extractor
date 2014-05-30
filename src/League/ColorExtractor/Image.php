@@ -97,7 +97,7 @@ class Image
             $i = 0;
             $mergeCount = 0;
             while ($i++ < $paletteSize) {
-                if ($paletteSize == count($colors)) {
+                if ($paletteSize >= count($colors)) {
                     break;
                 }
                 $j = 0;
