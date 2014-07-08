@@ -35,9 +35,8 @@ class ColorExtractorServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bindShared('color-extractor', function ($app) {
-                return new Client;
-            }
-        );
+            return new Client();
+        });
 
         $this->app->alias('color-extractor', 'League\ColorExtractor\Client');
     }
