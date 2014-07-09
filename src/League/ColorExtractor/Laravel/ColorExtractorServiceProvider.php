@@ -34,11 +34,11 @@ class ColorExtractorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['color-extractor'] = $this->app->share(
-            function ($app) {
-                return new Client;
-            }
-        );
+        $this->app->bindShared('color-extractor', function ($app) {
+            return new Client();
+        });
+
+        $this->app->alias('color-extractor', 'League\ColorExtractor\Client');
     }
 
     /**
@@ -48,6 +48,6 @@ class ColorExtractorServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('color-extractor');
+        return array('color-extractor', 'League\ColorExtractor\Client');
     }
 }
