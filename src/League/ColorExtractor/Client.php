@@ -15,7 +15,7 @@ class Client
      */
     public function loadJpeg($imagePath)
     {
-        return new Image(imagecreatefromjpeg($imagePath));
+        return new Image(\imagecreatefromjpeg($imagePath));
     }
 
     /**
@@ -25,7 +25,7 @@ class Client
      */
     public function loadPng($imagePath)
     {
-        return new Image(imagecreatefrompng($imagePath));
+        return new Image(\imagecreatefrompng($imagePath));
     }
 
     /**
@@ -35,6 +35,6 @@ class Client
      */
     public function loadGif($imagePath)
     {
-        return new Image(imagecreatefromgif($imagePath));
+        return new Image(\imagecreatefromgif($imagePath));
     }
 }
