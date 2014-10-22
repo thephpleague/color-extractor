@@ -11,12 +11,8 @@ Extract colors from an image like a human would do.
 
 Via Composer
 
-```json
-{
-    "require": {
-        "league/color-extractor": "0.1.*"
-    }
-}
+``` bash
+$ composer require league/color-extractor:0.1.*
 ```
 
 ## Usage
