@@ -56,17 +56,24 @@ class Image
         $w = imagesx($this->imageResource);
         $h = imagesy($this->imageResource);
 
+        $isImageIndexed = !imageistruecolor($this->imageResource);
+
         $colors = array();
 
         for ($x = 0; $x < $w; $x++) {
             for ($y = 0; $y < $h; $y++) {
-                $rgba = imagecolorsforindex($this->imageResource, imagecolorat($this->imageResource, $x, $y));
-                if ($rgba['alpha'] == 127) {
+                $color = imagecolorat($this->imageResource, $x, $y);
+                if ($isImageIndexed) {
+                    $rgba = imagecolorsforindex($this->imageResource, $color);
+                    if ($rgba['alpha'] == 127) {
+                        continue;
+                    }
+                    $color = ($rgba['red']*65536) + ($rgba['green']*256) + ($rgba['blue']);
+                } elseif (($color >> 24) & 0x7F == 127) {
                     continue;
                 }
-                $color = hexdec(sprintf('%02X%02X%02X', $rgba['red'], $rgba['green'], $rgba['blue']));
 
-                if (array_key_exists($color, $colors)) {
+                if (isset($colors[$color])) {
                     $colors[$color]++;
                 } else {
                     $colors[$color] = 1;
@@ -187,7 +194,7 @@ class Image
         return array(
             ($color >> 16) & 0xFF,
             ($color >> 8) & 0xFF,
-            $color & 0xFF
+            $color & 0xFF,
         );
     }
 
@@ -224,7 +231,7 @@ class Image
         return array(
             $this->getSRGBComponent($RGBComponents[0]),
             $this->getSRGBComponent($RGBComponents[1]),
-            $this->getSRGBComponent($RGBComponents[2])
+            $this->getSRGBComponent($RGBComponents[2]),
         );
     }
 
@@ -254,7 +261,7 @@ class Image
         return array(
             .4124 * $r + .3576 * $g + .1805 * $b,
             .2126 * $r + .7152 * $g + .0722 * $b,
-            .0193 * $r + .1192 * $g + .9505 * $b
+            .0193 * $r + .1192 * $g + .9505 * $b,
         );
     }
 
@@ -271,7 +278,7 @@ class Image
         return array(
             116 * $fY - 16,
             500 * ($this->xyzToLabStep($x) - $fY),
-            200 * ($fY - $this->xyzToLabStep($z))
+            200 * ($fY - $this->xyzToLabStep($z)),
         );
     }
 
