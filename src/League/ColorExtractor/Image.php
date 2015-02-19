@@ -125,7 +125,7 @@ class Image
                     }
                     $mergeCount = 0;
                 }
-                while ($j++ <= $paletteSize) {
+                while (++$j <= $paletteSize) {
                     next($colors);
                     $cmpColor = key($colors);
 
