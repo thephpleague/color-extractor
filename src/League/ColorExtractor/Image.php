@@ -114,7 +114,7 @@ class Image
                 }
                 $refColor = key($colors);
 
-                if (!array_key_exists($refColor, $LabCache)) {
+                if (!isset($LabCache[$refColor])) {
                     $LabCache[$refColor] = $this->getLabFromColor($refColor);
                 }
 
@@ -129,7 +129,7 @@ class Image
                     next($colors);
                     $cmpColor = key($colors);
 
-                    if (!array_key_exists($cmpColor, $LabCache)) {
+                    if (!isset($LabCache[$cmpColor])) {
                         $LabCache[$cmpColor] = $this->getLabFromColor($cmpColor);
                     }
 
