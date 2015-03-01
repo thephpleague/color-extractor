@@ -126,7 +126,9 @@ class Image
                     $mergeCount = 0;
                 }
                 while ($j++ <= $paletteSize) {
-                    next($colors);
+                    if (next($colors) === false) {
+                        break;
+                    };
                     $cmpColor = key($colors);
 
                     if (!isset($LabCache[$cmpColor])) {
