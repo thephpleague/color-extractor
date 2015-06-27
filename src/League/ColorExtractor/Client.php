@@ -9,7 +9,31 @@ namespace League\ColorExtractor;
 class Client
 {
     /**
-     * @param $imagePath
+     * @param resource $resource
+     *
+     * @return Image
+     */
+    public function loadResource($resource)
+    {
+        if (!is_resource($resource) || get_resource_type($resource) != 'gd') {
+            throw new \InvalidArgumentException('Image must be a gd resource');
+        }
+
+        return new Image($resource);
+    }
+
+    /**
+     * @param string $imagePath
+     *
+     * @return Image
+     */
+    public function loadFile($imagePath)
+    {
+        return new Image(imagecreatefromstring(file_get_contents($imagePath)));
+    }
+    
+    /**
+     * @param string $imagePath
      *
      * @return Image
      */
@@ -19,7 +43,7 @@ class Client
     }
 
     /**
-     * @param $imagePath
+     * @param string $imagePath
      *
      * @return Image
      */
@@ -29,7 +53,7 @@ class Client
     }
 
     /**
-     * @param $imagePath
+     * @param string $imagePath
      *
      * @return Image
      */
