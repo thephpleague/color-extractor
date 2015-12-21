@@ -24,7 +24,7 @@ class ColorExtractorServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bindShared('color-extractor', function ($app) {
+        $this->app->singleton('color-extractor', function ($app) {
             return new Client();
         });
 
