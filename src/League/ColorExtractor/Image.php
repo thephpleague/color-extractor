@@ -25,6 +25,14 @@ class Image
     {
         $this->imageResource = $imageResource;
     }
+    
+    /**
+     * @return resource
+     */
+    public function getImageResource()
+    {
+        return $this->imageResource;
+    }
 
     /**
      * @param $minColorRatio
