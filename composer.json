@@ -21,14 +21,12 @@
         "ext-gd": "*"
     },
     "require-dev": {
-        "laravel/framework": "~4.1",
-        "orchestra/testbench": "~2.0",
-        "silex/silex": "~1.1",
-        "squizlabs/php_codesniffer": "~1.5"
+        "fabpot/php-cs-fixer": "*",
+        "phpunit/phpunit": "~5"
     },
     "autoload": {
-        "psr-0": {
-            "League\\ColorExtractor": ["src", "tests"]
+        "psr-4": {
+            "": "src"
         }
     }
 }

@@ -12,7 +12,7 @@ Extract colors from an image like a human would do.
 Via Composer
 
 ``` bash
-$ composer require league/color-extractor:0.1.*
+$ composer require league/color-extractor:0.2.*
 ```
 
 ## Usage
@@ -20,77 +20,33 @@ $ composer require league/color-extractor:0.1.*
 ```php
 require 'vendor/autoload.php';
 
-use League\ColorExtractor\Client as ColorExtractor;
+use League\ColorExtractor\Color;
+use League\ColorExtractor\ColorExtractor;
+use League\ColorExtractor\Palette;
 
-$client = new ColorExtractor;
+$palette = Palette::fromFilename('./some/image.png');
 
-$image = $client->loadPng('./some/image.png');
+// $palette is an iterator on colors sorted by pixel count
+foreach($palette as $color => $count) {
+    // colors are represented by integers
+    echo Color::fromIntToHex($color), ': ', $count, "\n";
+}
 
-// Get the most used color hex code
-$palette = $image->extract();
+// it offers some helpers too
+$topFive = $palette->getMostUsedColors(5);
 
-// Get three most used color hex code
-$palette = $image->extract(3);
+$colorCount = count($palette);
 
-// Change the Minimum Color Ratio (0 - 1)
-// Default: 0
-$image->setMinColorRatio(1);
-$palette = $image->extract();
+$blackCount = $palette->getColorCount(Color::fromHexToInt('#000000'));
+
+
+// an extractor is built from a palette
+$extractor = new ColorExtractor($palette);
+
+// it defines an extract method which return the most “representative” colors
+$colors = $extractor->extract(5);
 
 ```
-
-## Service Providers
-
-Integration with most frameworks would require a bridge package, but for Silex and Laravel 4 a 
-simple service provider will suffice. 
-
-### Silex
-
-First register `ColorExtractorServiceProvider` in your application:
-```php
-use League\ColorExtractor\Silex\ColorExtractorServiceProvider;
-
-// ... create $app
-$app->register(new ColorExtractorServiceProvider);
-```
-
-Then you can use like this:
-
-```php
-$image = $app['color-extractor']->loadPng('./some/image.png');
-...
-$palette = $image->extract();
-```
-
-### Laravel 4
-
-Find the `providers` key in `app/config/app.php` and register the `ColorExtractorServiceProvider`:
-
-```php
-'providers' => array(
-    // ...
-    'League\ColorExtractor\Laravel\ColorExtractorServiceProvider',
-)
-```
-
-Then you can use it exactly the same way as the Silex service provider.
-If you prefer to use Facades, find the `aliases` key in `app/config/app.php` and register the `ColorExtractorFacade`:
-
-```php
-'aliases' => array(
-    // ...
-    'ColorExtractor' => 'League\ColorExtractor\Laravel\ColorExtractorFacade',
-)
-```
-
-Example:
-
-```php
-$image = ColorExtractor::loadPng('./some/image.png');
-...
-$palette = $image->extract();
-```
-
 
 ## Contributing
 
