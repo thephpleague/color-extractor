@@ -7,6 +7,8 @@ $finder = \Symfony\Component\Finder\Finder::create()
 
 $config = Symfony\CS\Config\Config::create()
     ->finder($finder)
+    ->level(\Symfony\CS\FixerInterface::SYMFONY_LEVEL)
+    ->fixers(array('short_array_syntax'))
     ->setUsingCache(true);
 
 return $config;

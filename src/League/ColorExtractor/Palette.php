@@ -71,7 +71,7 @@ class Palette implements \Countable, \IteratorAggregate
         $areColorsIndexed = !imageistruecolor($image);
         $imageWidth = imagesx($image);
         $imageHeight = imagesy($image);
-        $palette->colors = array();
+        $palette->colors = [];
 
         for ($x = 0; $x < $imageWidth; ++$x) {
             for ($y = 0; $y < $imageHeight; ++$y) {
@@ -94,6 +94,6 @@ class Palette implements \Countable, \IteratorAggregate
 
     protected function __construct()
     {
-        $this->colors = array();
+        $this->colors = [];
     }
 }

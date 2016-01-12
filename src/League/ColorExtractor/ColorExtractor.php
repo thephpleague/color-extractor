@@ -72,8 +72,8 @@ class ColorExtractor
     protected static function mergeColors(\SplFixedArray $colors, $limit, $maxDelta)
     {
         $limit = min(count($colors), $limit);
-        $labCache = array();
-        $mergedColors = array();
+        $labCache = [];
+        $mergedColors = [];
 
         foreach ($colors as $i => $color) {
             if (empty($mergedColors)) {
@@ -189,11 +189,11 @@ class ColorExtractor
         return self::xyzToLab(
             self::srgbToXyz(
                 self::rgbToSrgb(
-                    array(
+                    [
                         'R' => ($color >> 16) & 0xFF,
                         'G' => ($color >> 8) & 0xFF,
                         'B' => $color & 0xFF,
-                    )
+                    ]
                 )
             )
         );
@@ -220,11 +220,11 @@ class ColorExtractor
      */
     protected static function rgbToSrgb($rgb)
     {
-        return array(
+        return [
             'R' => self::rgbToSrgbStep($rgb['R']),
             'G' => self::rgbToSrgbStep($rgb['G']),
             'B' => self::rgbToSrgbStep($rgb['B']),
-        );
+        ];
     }
 
     /**
@@ -234,11 +234,11 @@ class ColorExtractor
      */
     protected static function srgbToXyz($rgb)
     {
-        return array(
+        return [
             'X' => (.4124564 * $rgb['R']) + (.3575761 * $rgb['G']) + (.1804375 * $rgb['B']),
             'Y' => (.2126729 * $rgb['R']) + (.7151522 * $rgb['G']) + (.0721750 * $rgb['B']),
             'Z' => (.0193339 * $rgb['R']) + (.1191920 * $rgb['G']) + (.9503041 * $rgb['B']),
-        );
+        ];
     }
 
     /**
@@ -264,10 +264,10 @@ class ColorExtractor
         $Zn = 1.08883;
 
         // http://en.wikipedia.org/wiki/Lab_color_space#CIELAB-CIEXYZ_conversions
-        return array(
+        return [
             'L' => 116 * self::xyzToLabStep($xyz['Y'] / $Yn) - 16,
             'a' => 500 * (self::xyzToLabStep($xyz['X'] / $Xn) - self::xyzToLabStep($xyz['Y'] / $Yn)),
             'b' => 200 * (self::xyzToLabStep($xyz['Y'] / $Yn) - self::xyzToLabStep($xyz['Z'] / $Zn)),
-        );
+        ];
     }
 }
