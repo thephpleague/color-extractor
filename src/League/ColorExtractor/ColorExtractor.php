@@ -43,16 +43,32 @@ class ColorExtractor
     protected function initialize()
     {
         $queue = new \SplPriorityQueue();
-        $this->sortedColors = new \SplFixedArray(count($this->palette));
+        $colorCount = count($this->palette);
+        $labCache = new \SplFixedArray($colorCount);
+        $pixelCount = 0;
+        $cumulatedLightness = 0;
 
+        $this->sortedColors = new \SplFixedArray($colorCount);
+
+        $i = 0;
         foreach ($this->palette as $color => $count) {
-            $colorLab = self::intColorToLab($color);
+            $pixelCount += $count;
+            $labCache[$i] = self::intColorToLab($color);
+            $cumulatedLightness += $labCache[$i]['L']*$count;
+            ++$i;
+        }
+
+        $averageLightness = $cumulatedLightness/$pixelCount;
+
+        $i = 0;
+        foreach ($this->palette as $color => $count) {
             $queue->insert(
                 $color,
-                sqrt($colorLab['a'] * $colorLab['a'] + $colorLab['b'] * $colorLab['b']) *
-                (1 - $colorLab['L']/100) *
+                sqrt($labCache[$i]['a'] * $labCache[$i]['a'] + $labCache[$i]['b'] * $labCache[$i]['b']) *
+                (100 - abs($labCache[$i]['L'] - $averageLightness)) *
                 sqrt($count)
             );
+            ++$i;
         }
 
         $i = 0;

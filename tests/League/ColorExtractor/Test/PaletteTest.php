@@ -49,6 +49,6 @@ class PaletteTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $colors);
         $this->assertCount($numColors, $colors);
-        $this->assertEquals($colors, [14024704, 3407872, 15118468]);
+        $this->assertEquals($colors, [14024704, 7111569, 15118468]);
     }
 }
