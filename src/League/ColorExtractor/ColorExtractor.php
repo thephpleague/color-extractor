@@ -50,7 +50,8 @@ class ColorExtractor
             $queue->insert(
                 $color,
                 sqrt($colorLab['a'] * $colorLab['a'] + $colorLab['b'] * $colorLab['b']) *
-                (.5 + ($colorLab['L'] - 50) * ($colorLab['L'] - 50) / 5000)
+                (1 - $colorLab['L']/100) *
+                sqrt($count)
             );
         }
 
