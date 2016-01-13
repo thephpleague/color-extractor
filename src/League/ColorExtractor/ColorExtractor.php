@@ -54,11 +54,11 @@ class ColorExtractor
         foreach ($this->palette as $color => $count) {
             $pixelCount += $count;
             $labCache[$i] = self::intColorToLab($color);
-            $cumulatedLightness += $labCache[$i]['L']*$count;
+            $cumulatedLightness += $labCache[$i]['L'] * $count;
             ++$i;
         }
 
-        $averageLightness = $cumulatedLightness/$pixelCount;
+        $averageLightness = $cumulatedLightness / $pixelCount;
 
         $i = 0;
         foreach ($this->palette as $color => $count) {
@@ -92,7 +92,7 @@ class ColorExtractor
         if ($limit === 1) {
             return [$colors[0]];
         }
-        $labCache = new \SplFixedArray($limit);
+        $labCache = new \SplFixedArray($limit - 1);
         $mergedColors = [];
 
         foreach ($colors as $color) {
@@ -112,13 +112,13 @@ class ColorExtractor
             }
 
             $mergedColorCount = count($mergedColors);
-
-            $labCache[$mergedColorCount] = $colorLab;
             $mergedColors[] = $color;
 
             if ($mergedColorCount + 1 == $limit) {
                 break;
             }
+
+            $labCache[$mergedColorCount] = $colorLab;
         }
 
         return $mergedColors;
