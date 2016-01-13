@@ -77,23 +77,17 @@ class ColorExtractor
         $mergedColors = [];
 
         foreach ($colors as $i => $color) {
+            $labCache[$color] = self::intColorToLab($color);
+
             if (empty($mergedColors)) {
                 $mergedColors[] = $color;
                 continue;
             }
 
-            $labColor = isset($labCache[$color]) ?
-                $labCache[$color] :
-                self::intColorToLab($color);
-
             $hasColorBeenMerged = false;
 
             foreach ($mergedColors as $mergedColor) {
-                $mergedLabColor = isset($labCache[$mergedColor]) ?
-                    $labCache[$mergedColor] :
-                    self::intColorToLab($mergedColor);
-
-                if (self::ciede2000DeltaE($labColor, $mergedLabColor) < $maxDelta) {
+                if (self::ciede2000DeltaE($labCache[$color], $labCache[$mergedColor]) < $maxDelta) {
                     $hasColorBeenMerged = true;
                     break;
                 }
