@@ -73,29 +73,34 @@ class ColorExtractor
     protected static function mergeColors(\SplFixedArray $colors, $limit, $maxDelta)
     {
         $limit = min(count($colors), $limit);
-        $labCache = [];
+        if ($limit === 1) {
+            return [$colors[0]];
+        }
+        $labCache = new \SplFixedArray($limit);
         $mergedColors = [];
 
-        foreach ($colors as $i => $color) {
-            $labCache[$color] = self::intColorToLab($color);
-
-            if (empty($mergedColors)) {
-                $mergedColors[] = $color;
-                continue;
-            }
-
+        foreach ($colors as $color) {
             $hasColorBeenMerged = false;
 
-            foreach ($mergedColors as $mergedColor) {
-                if (self::ciede2000DeltaE($labCache[$color], $labCache[$mergedColor]) < $maxDelta) {
+            $colorLab = self::intColorToLab($color);
+
+            foreach ($mergedColors as $i => $mergedColor) {
+                if (self::ciede2000DeltaE($colorLab, $labCache[$i]) < $maxDelta) {
                     $hasColorBeenMerged = true;
                     break;
                 }
             }
-            if (!$hasColorBeenMerged) {
-                $mergedColors[] = $color;
+
+            if ($hasColorBeenMerged) {
+                continue;
             }
-            if (count($mergedColors) == $limit) {
+
+            $mergedColorCount = count($mergedColors);
+
+            $labCache[$mergedColorCount] = $colorLab;
+            $mergedColors[] = $color;
+
+            if ($mergedColorCount + 1 == $limit) {
                 break;
             }
         }
