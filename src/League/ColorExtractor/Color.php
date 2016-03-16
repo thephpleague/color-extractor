@@ -24,4 +24,28 @@ class Color
     {
         return hexdec(ltrim($color, '#'));
     }
+
+    /**
+     * @param string $color
+     *
+     * @return array
+     */
+    public static function fromHexToRGB($color)
+    {
+        list($r, $g, $b) = sscanf($color, "#%02x%02x%02x");
+
+        return ['r' => $r, 'g' => $g, 'b' => $b];
+    }
+
+    /**
+     * @param int $color
+     *
+     * @return array
+     */
+    public static function fromIntToRGB($color)
+    {
+        $color = self::fromIntToHex($color);
+
+        return self::fromHexToRGB($color);
+    }
 }
