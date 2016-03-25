@@ -6,10 +6,14 @@ use League\ColorExtractor\Color;
 
 class ColorTest extends \PHPUnit_Framework_TestCase
 {
-    
+
     public function testItConvertsHexToRGB()
     {
         $rgb = Color::fromHexToRGB('#9B59BB');
+
+        $this->assertEquals(['r' => 155, 'g' => 89, 'b' => 187], $rgb);
+
+        $rgb = Color::fromHexToRGB('9B59BB');
 
         $this->assertEquals(['r' => 155, 'g' => 89, 'b' => 187], $rgb);
 
@@ -17,11 +21,23 @@ class ColorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(['r' => 0, 'g' => 255, 'b' => 170], $rgb);
 
+        $rgb = Color::fromHexToRGB('00FFAA');
+
+        $this->assertEquals(['r' => 0, 'g' => 255, 'b' => 170], $rgb);
+
         $rgb = Color::fromHexToRGB('#FFFFFF');
 
         $this->assertEquals(['r' => 255, 'g' => 255, 'b' => 255], $rgb);
 
+        $rgb = Color::fromHexToRGB('FFFFFF');
+
+        $this->assertEquals(['r' => 255, 'g' => 255, 'b' => 255], $rgb);
+
         $rgb = Color::fromHexToRGB('#000000');
+
+        $this->assertEquals(['r' => 0, 'g' => 0, 'b' => 0], $rgb);
+
+        $rgb = Color::fromHexToRGB('000000');
 
         $this->assertEquals(['r' => 0, 'g' => 0, 'b' => 0], $rgb);
     }

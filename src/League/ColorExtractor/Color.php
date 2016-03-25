@@ -5,14 +5,15 @@ namespace League\ColorExtractor;
 class Color
 {
     /**
-     * @param int  $color
+     * @param int $color
      * @param bool $prependHash = true
      *
      * @return string
      */
     public static function fromIntToHex($color, $prependHash = true)
     {
-        return ($prependHash ? '#' : '').sprintf('%02X%02X%02X', ($color >> 16) & 0xFF, ($color >> 8) & 0xFF, $color & 0xFF);
+        return ($prependHash ? '#' : '') . sprintf('%02X%02X%02X', ($color >> 16) & 0xFF, ($color >> 8) & 0xFF,
+            $color & 0xFF);
     }
 
     /**
@@ -32,7 +33,7 @@ class Color
      */
     public static function fromHexToRGB($color)
     {
-        list($r, $g, $b) = sscanf($color, "#%02x%02x%02x");
+        list($r, $g, $b) = sscanf(ltrim($color, '#'), "%2x%2x%2x");
 
         return ['r' => $r, 'g' => $g, 'b' => $b];
     }
