@@ -12,7 +12,7 @@ class Color
      */
     public static function fromIntToHex($color, $prependHash = true)
     {
-        return ($prependHash ? '#' : '').sprintf('%02X%02X%02X', ($color >> 16) & 0xFF, ($color >> 8) & 0xFF, $color & 0xFF);
+        return ($prependHash ? '#' : '').sprintf('%06X', $color);
     }
 
     /**
@@ -23,5 +23,29 @@ class Color
     public static function fromHexToInt($color)
     {
         return hexdec(ltrim($color, '#'));
+    }
+
+    /**
+     * @param int $color
+     *
+     * @return array
+     */
+    public static function fromIntToRgb($color)
+    {
+        return [
+            'r' => $color >> 16 & 0xFF,
+            'g' => $color >> 8 & 0xFF,
+            'b' => $color & 0xFF,
+        ];
+    }
+
+    /**
+     * @param array $components
+     *
+     * @return int
+     */
+    public static function fromRgbToInt(array $components)
+    {
+        return ($components['r'] * 65536) + ($components['g'] * 256) + ($components['b']);
     }
 }
