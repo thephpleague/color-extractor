@@ -21,7 +21,7 @@
         "ext-gd": "*"
     },
     "require-dev": {
-        "fabpot/php-cs-fixer": "*",
+        "friendsofphp/php-cs-fixer": "*",
         "phpunit/phpunit": "~5"
     },
     "autoload": {
