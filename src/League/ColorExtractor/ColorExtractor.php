@@ -7,7 +7,7 @@ class ColorExtractor
     /** @var \League\ColorExtractor\Palette */
     protected $palette;
 
-    /** @var  \SplFixedArray */
+    /** @var \SplFixedArray */
     protected $sortedColors;
 
     /**

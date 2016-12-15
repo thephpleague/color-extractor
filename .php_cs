@@ -1,14 +1,13 @@
 <?php
 
-$finder = \Symfony\Component\Finder\Finder::create()
+$finder = Symfony\Component\Finder\Finder::create()
     ->files()
     ->name('*.php')
     ->in(array('src', 'tests'));
 
-$config = Symfony\CS\Config\Config::create()
-    ->finder($finder)
-    ->level(\Symfony\CS\FixerInterface::SYMFONY_LEVEL)
-    ->fixers(array('short_array_syntax'))
-    ->setUsingCache(true);
-
-return $config;
+return PhpCsFixer\Config::create()
+    ->setFinder($finder)
+    ->setRules([
+        '@Symfony' => true,
+        'array_syntax' => ['syntax' => 'short'],
+    ]);
