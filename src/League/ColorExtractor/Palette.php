@@ -51,10 +51,11 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromFilename($filename, $backgroundColor = null)
     {
-        return self::fromGD(
-            imagecreatefromstring(file_get_contents($filename)),
-            $backgroundColor
-        );
+        $image = imagecreatefromstring(file_get_contents($filename));
+        $palette = self::fromGD($image, $backgroundColor);
+        imagedestroy($image);
+
+        return $palette;
     }
 
     /**
