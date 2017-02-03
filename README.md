@@ -51,7 +51,7 @@ $colors = $extractor->extract(5);
 ## Handling transparency
 
 By default **any pixel with alpha value greater than zero will be discarded**. This is because transparent colors are not perceived
-as is. For exemple fully transparent black would be seen white on a white background. So if you want to take transparency into account
+as is. For example fully transparent black would be seen white on a white background. So if you want to take transparency into account
 when building a palette you have to specify this background color. You can do this with the second argument of `Palette` constructors.
 Its default value is `null`, meaning a color won't be added to the palette if its alpha component exists and is greater than zero.
 
