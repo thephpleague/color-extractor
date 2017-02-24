@@ -51,11 +51,21 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromFilename($filename, $backgroundColor = null)
     {
-        $image = imagecreatefromstring(file_get_contents($filename));
-        $palette = self::fromGD($image, $backgroundColor);
-        imagedestroy($image);
+        if (extension_loaded('imagick')) {
+            return self::fromImagick(
+                new \Imagick($filename),
+                $backgroundColor
+            );
+        }
 
-        return $palette;
+        if (extension_loaded('gd')) {
+	        $image = imagecreatefromstring(file_get_contents($filename));
+	        $palette = self::fromGD($image, $backgroundColor);
+            imagedestroy($image);
+            return $palette;
+        }
+
+        throw new \RuntimeException('imagick or gd extension must be loaded');
     }
 
     /**
@@ -112,6 +122,46 @@ class Palette implements \Countable, \IteratorAggregate
                     $palette->colors[$color] += 1 :
                     $palette->colors[$color] = 1;
             }
+        }
+
+        arsort($palette->colors);
+
+        return $palette;
+    }
+
+    /**
+     * @param \Imagick $image
+     * @param int|null $backgroundColor
+     *
+     * @return Palette
+     */
+    public static function fromImagick(\Imagick $image, $backgroundColor = null)
+    {
+        $palette = new self();
+
+        $backgroundColorRed = ($backgroundColor >> 16) & 0xFF;
+        $backgroundColorGreen = ($backgroundColor >> 8) & 0xFF;
+        $backgroundColorBlue = $backgroundColor & 0xFF;
+
+        /** @var \ImagickPixel $pixel */
+        foreach ($image->getImageHistogram() as $pixel) {
+            $colorComponents = $pixel->getColor(true);
+            $color = ($colorComponents['a'] * 4278190080) +
+                     ($colorComponents['r'] * 16711680) +
+                     ($colorComponents['g'] * 65280) +
+                     ($colorComponents['b'] * 255);
+
+            if ($colorComponents['a']) {
+                if ($backgroundColor === null) {
+                    continue;
+                }
+
+                $color = (int) (($color >> 16 & 0xFF) * (1 - $colorComponents['a']) + $backgroundColorRed * $colorComponents['a']) * 65536 +
+                    (int) (($color >> 8 & 0xFF) * (1 - $colorComponents['a']) + $backgroundColorGreen * $colorComponents['a']) * 256 +
+                    (int) (($color & 0xFF) * (1 - $colorComponents['a']) + $backgroundColorBlue * $colorComponents['a']);
+            }
+
+            $palette->colors[$color] = $pixel->getColorCount();
         }
 
         arsort($palette->colors);
