@@ -15,6 +15,8 @@ Via Composer
 $ composer require league/color-extractor:0.3.*
 ```
 
+Requires an installation of php that includes GD support. See [PHP.net documentation](http://php.net/manual/en/image.installation.php) for installation procedures. 
+
 ## Usage
 
 ```php
