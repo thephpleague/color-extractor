@@ -74,11 +74,7 @@ final class Color
     {
         $color = self::filterIntColor($color);
 
-        return [
-            'r' => $color >> 16 & 0xFF,
-            'g' => $color >> 8 & 0xFF,
-            'b' => $color & 0xFF,
-        ];
+        return ['r' => $color >> 16 & 0xFF, 'g' => $color >> 8 & 0xFF, 'b' => $color & 0xFF];
     }
 
     /**
@@ -91,11 +87,27 @@ final class Color
     public static function fromRgbToInt(array $rgb): int
     {
         foreach (['r', 'g', 'b'] as $offset) {
-            if (!isset($rgb[$offset]) || $rgb[$offset] < 0 || $rgb[$offset] > 255) {
-                throw new InvalidArgumentException(sprintf('"%s" does not represent a valid color', json_encode($rgb)));
-            }
+            $rgb[$offset] = self::filterRgbValue($rgb[$offset] ?? null);
         }
 
         return ($rgb['r'] * 65536) + ($rgb['g'] * 256) + $rgb['b'];
+    }
+
+    /**
+     * Validate the RGB color value.
+     *
+     * @param int|null $color
+     *
+     * @throws InvalidArgumentException if the value does not represent a valid color
+     *
+     * @return int
+     */
+    private static function filterRgbValue(int $color = null): int
+    {
+        if (isset($color) && $color >= 0 && $color <= 255) {
+            return $color;
+        }
+
+        throw new InvalidArgumentException(sprintf('"%s" does not represent a valid RGB color value', $color));
     }
 }
