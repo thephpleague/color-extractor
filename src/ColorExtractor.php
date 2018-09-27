@@ -135,14 +135,13 @@ final class ColorExtractor
         $LpDelta = $secondLabColor['L'] - $firstLabColor['L'];
         $CpDelta = $C2p - $C1p;
 
+        $hpDelta = $h2p - $h1p + 360;
         if (0 == $C1p * $C2p) {
             $hpDelta = 0;
         } elseif (abs($h2p - $h1p) <= 180) {
             $hpDelta = $h2p - $h1p;
         } elseif ($h2p - $h1p > 180) {
             $hpDelta = $h2p - $h1p - 360;
-        } else {
-            $hpDelta = $h2p - $h1p + 360;
         }
 
         $HpDelta = 2 * sqrt($C1p * $C2p) * sin($hpDelta / 2);
@@ -150,14 +149,13 @@ final class ColorExtractor
         $Lbp = ($firstLabColor['L'] + $secondLabColor['L']) / 2;
         $Cbp = ($C1p + $C2p) / 2;
 
+        $hbp = ($h1p + $h2p - 360) / 2;
         if (0 == $C1p * $C2p) {
             $hbp = $h1p + $h2p;
         } elseif (abs($h1p - $h2p) <= 180) {
             $hbp = ($h1p + $h2p) / 2;
         } elseif ($h1p + $h2p < 360) {
             $hbp = ($h1p + $h2p + 360) / 2;
-        } else {
-            $hbp = ($h1p + $h2p - 360) / 2;
         }
 
         $T = 1 - .17 * cos($hbp - 30) + .24 * cos(2 * $hbp) + .32 * cos(3 * $hbp + 6) - .2 * cos(4 * $hbp - 63);
