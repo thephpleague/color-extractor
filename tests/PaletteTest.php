@@ -77,7 +77,6 @@ class PaletteTest extends TestCase
         $palette = Palette::fromFilename($this->transparentPngPath);
         self::assertCount(0, $palette);
         self::assertSame(0, $palette->getColorCount($colorId));
-        self::assertFalse($palette->contains($colorId));
         self::assertSame([], $palette->getMostUsedColors());
 
         $whiteBackgroundPalette = Palette::fromFilename($this->transparentPngPath, Color::fromHexToInt('#FFFFFF'));

@@ -52,18 +52,6 @@ final class Palette implements Countable, IteratorAggregate
     }
 
     /**
-     * Tells whether the submitted color is present in the Palette.
-     *
-     * @param int $color
-     *
-     * @return bool
-     */
-    public function contains(int $color): bool
-    {
-        return isset($this->colors[$color]);
-    }
-
-    /**
      * @param int $limit = null
      *
      * @return array
