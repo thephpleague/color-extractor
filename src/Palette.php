@@ -6,7 +6,6 @@ namespace League\ColorExtractor;
 
 use Countable;
 use IteratorAggregate;
-use InvalidArgumentException;
 use TypeError;
 
 final class Palette implements Countable, IteratorAggregate
@@ -82,7 +81,7 @@ final class Palette implements Countable, IteratorAggregate
      *
      * @return self
      *
-     * @throws InvalidArgumentException
+     * @throws TypeError
      */
     public static function fromGD($image, int $backgroundColor = null): self
     {
@@ -90,17 +89,15 @@ final class Palette implements Countable, IteratorAggregate
             throw new TypeError('Image must be a gd resource');
         }
 
-        if (null !== $backgroundColor && ($backgroundColor < 0 || $backgroundColor > 16777215)) {
-            throw new InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
+        $bgColor = [];
+        if (null !== $backgroundColor) {
+            $bgColor = Color::fromIntToRgb($backgroundColor);
         }
 
         $areColorsIndexed = !imageistruecolor($image);
         $imageWidth = imagesx($image);
         $imageHeight = imagesy($image);
 
-        $backgroundColorRed = ($backgroundColor >> 16) & 0xFF;
-        $backgroundColorGreen = ($backgroundColor >> 8) & 0xFF;
-        $backgroundColorBlue = $backgroundColor & 0xFF;
         $colors = [];
         for ($x = 0; $x < $imageWidth; ++$x) {
             for ($y = 0; $y < $imageHeight; ++$y) {
@@ -114,14 +111,14 @@ final class Palette implements Countable, IteratorAggregate
                 }
 
                 if ($alpha = $color >> 24) {
-                    if (null === $backgroundColor) {
+                    if ([] === $bgColor) {
                         continue;
                     }
 
                     $alpha /= 127;
-                    $color = (int) (($color >> 16 & 0xFF) * (1 - $alpha) + $backgroundColorRed * $alpha) * 65536 +
-                             (int) (($color >> 8 & 0xFF) * (1 - $alpha) + $backgroundColorGreen * $alpha) * 256 +
-                             (int) (($color & 0xFF) * (1 - $alpha) + $backgroundColorBlue * $alpha);
+                    $color = (int) (($color >> 16 & 0xFF) * (1 - $alpha) + $bgColor['r'] * $alpha) * 65536 +
+                             (int) (($color >> 8 & 0xFF) * (1 - $alpha) + $bgColor['g'] * $alpha) * 256 +
+                             (int) (($color & 0xFF) * (1 - $alpha) + $bgColor['b'] * $alpha);
                 }
 
                 $colors[$color] = $colors[$color] ?? 0;

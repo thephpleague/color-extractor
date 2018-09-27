@@ -73,6 +73,7 @@ final class ColorExtractor
      */
     private static function mergeColors(SplFixedArray $colors, int $limit, float $maxDelta): array
     {
+        $maxDelta = (int) $maxDelta;
         $limit = min(count($colors), $limit);
         if (1 === $limit) {
             return [$colors[0]];
@@ -86,7 +87,7 @@ final class ColorExtractor
             $colorLab = self::intColorToLab($color);
 
             foreach ($mergedColors as $i => $mergedColor) {
-                if (self::ciede2000DeltaE($colorLab, $labCache[$i]) < (int) $maxDelta) {
+                if (self::ciede2000DeltaE($colorLab, $labCache[$i]) < $maxDelta) {
                     $hasColorBeenMerged = true;
                     break;
                 }
@@ -186,9 +187,9 @@ final class ColorExtractor
     private static function intColorToLab(int $color): array
     {
         return self::xyzToLab(self::srgbToXyz(self::rgbToSrgb([
-            'R' => ($color >> 16) & 0xFF,
-            'G' => ($color >> 8) & 0xFF,
-            'B' => $color & 0xFF,
+            'r' => ($color >> 16) & 0xFF,
+            'g' => ($color >> 8) & 0xFF,
+            'b' => $color & 0xFF,
         ])));
     }
 
@@ -214,9 +215,9 @@ final class ColorExtractor
     private static function rgbToSrgb(array $rgb): array
     {
         return [
-            'R' => self::rgbToSrgbStep($rgb['R']),
-            'G' => self::rgbToSrgbStep($rgb['G']),
-            'B' => self::rgbToSrgbStep($rgb['B']),
+            'r' => self::rgbToSrgbStep($rgb['r']),
+            'g' => self::rgbToSrgbStep($rgb['g']),
+            'b' => self::rgbToSrgbStep($rgb['b']),
         ];
     }
 
@@ -228,9 +229,9 @@ final class ColorExtractor
     private static function srgbToXyz(array $rgb): array
     {
         return [
-            'X' => (.4124564 * $rgb['R']) + (.3575761 * $rgb['G']) + (.1804375 * $rgb['B']),
-            'Y' => (.2126729 * $rgb['R']) + (.7151522 * $rgb['G']) + (.0721750 * $rgb['B']),
-            'Z' => (.0193339 * $rgb['R']) + (.1191920 * $rgb['G']) + (.9503041 * $rgb['B']),
+            'X' => (.4124564 * $rgb['r']) + (.3575761 * $rgb['g']) + (.1804375 * $rgb['b']),
+            'Y' => (.2126729 * $rgb['r']) + (.7151522 * $rgb['g']) + (.0721750 * $rgb['b']),
+            'Z' => (.0193339 * $rgb['r']) + (.1191920 * $rgb['g']) + (.9503041 * $rgb['b']),
         ];
     }
 

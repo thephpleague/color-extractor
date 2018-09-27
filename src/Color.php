@@ -12,6 +12,8 @@ final class Color
      * @param int  $color
      * @param bool $prependHash = true
      *
+     * @throws InvalidArgumentException if the value does not represent a valid color
+     *
      * @return string
      */
     public static function fromIntToHex(int $color, bool $prependHash = true): string
@@ -25,6 +27,8 @@ final class Color
 
     /**
      * @param string $color
+     *
+     * @throws InvalidArgumentException if the value does not represent a valid color
      *
      * @return int
      */
@@ -49,23 +53,27 @@ final class Color
     /**
      * @param int $color
      *
+     * @throws InvalidArgumentException if the value does not represent a valid color
+     *
      * @return array
      */
     public static function fromIntToRgb(int $color): array
     {
-        if ($color < 0 || $color > 16777215) {
-            throw new InvalidArgumentException(sprintf('"%s" does not represent a valid color', $color));
+        if ($color >= 0 && $color <= 16777215) {
+            return [
+                'r' => $color >> 16 & 0xFF,
+                'g' => $color >> 8 & 0xFF,
+                'b' => $color & 0xFF,
+            ];
         }
 
-        return [
-            'r' => $color >> 16 & 0xFF,
-            'g' => $color >> 8 & 0xFF,
-            'b' => $color & 0xFF,
-        ];
+        throw new InvalidArgumentException(sprintf('"%s" does not represent a valid color', $color));
     }
 
     /**
      * @param array $components
+     *
+     * @throws InvalidArgumentException if the value does not represent a valid color
      *
      * @return int
      */
