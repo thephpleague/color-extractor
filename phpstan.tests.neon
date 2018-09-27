@@ -3,4 +3,5 @@ includes:
 	- vendor/phpstan/phpstan-phpunit/rules.neon
 parameters:
 	ignoreErrors:
+	    - '#Parameter \#1 \$image of static method League\\ColorExtractor\\Palette::fromGD\(\) expects resource, string given.#'
 	reportUnmatchedIgnoredErrors: false

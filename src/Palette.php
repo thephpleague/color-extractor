@@ -7,10 +7,13 @@ namespace League\ColorExtractor;
 use Countable;
 use IteratorAggregate;
 use InvalidArgumentException;
+use TypeError;
 
 final class Palette implements Countable, IteratorAggregate
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     private $colors;
 
     private function __construct(array $colors)
@@ -33,8 +36,8 @@ final class Palette implements Countable, IteratorAggregate
      */
     public function getIterator()
     {
-        foreach ($this->colors as $offset => $value) {
-            yield $offset => $value;
+        foreach ($this->colors as $color => $count) {
+            yield $color => $count;
         }
     }
 
@@ -45,7 +48,19 @@ final class Palette implements Countable, IteratorAggregate
      */
     public function getColorCount(int $color): int
     {
-        return $this->colors[$color];
+        return $this->colors[$color] ?? 0;
+    }
+
+    /**
+     * Tells whether the submitted color is present in the Palette.
+     *
+     * @param int $color
+     *
+     * @return bool
+     */
+    public function contains(int $color): bool
+    {
+        return isset($this->colors[$color]);
     }
 
     /**
@@ -62,7 +77,7 @@ final class Palette implements Countable, IteratorAggregate
      * @param string   $filename
      * @param int|null $backgroundColor
      *
-     * @return Palette
+     * @return self
      */
     public static function fromFilename(string $filename, int $backgroundColor = null): self
     {
@@ -77,15 +92,16 @@ final class Palette implements Countable, IteratorAggregate
      * @param resource $image
      * @param int|null $backgroundColor
      *
-     * @return Palette
+     * @return self
      *
      * @throws InvalidArgumentException
      */
     public static function fromGD($image, int $backgroundColor = null): self
     {
         if (!is_resource($image) || 'gd' != get_resource_type($image)) {
-            throw new InvalidArgumentException('Image must be a gd resource');
+            throw new TypeError('Image must be a gd resource');
         }
+
         if (null !== $backgroundColor && ($backgroundColor < 0 || $backgroundColor > 16777215)) {
             throw new InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
         }
