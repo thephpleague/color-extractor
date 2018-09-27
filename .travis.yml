@@ -1,16 +1,33 @@
 language: php
 
-php:
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - hhvm
+sudo: false
 
-before_script:
+matrix:
+  include:
+    - php: 7.0
+      env: COLLECT_COVERAGE=true VALIDATE_CODING_STYLE=false RUN_PHPSTAN=false IGNORE_PLATFORMS=false
+    - php: 7.1
+      env: COLLECT_COVERAGE=true VALIDATE_CODING_STYLE=true RUN_PHPSTAN=true IGNORE_PLATFORMS=false
+    - php: 7.2
+      env: COLLECT_COVERAGE=true VALIDATE_CODING_STYLE=false RUN_PHPSTAN=false IGNORE_PLATFORMS=false
+    - php: nightly
+      env: COLLECT_COVERAGE=false VALIDATE_CODING_STYLE=false RUN_PHPSTAN=false IGNORE_PLATFORMS=true
+  allow_failures:
+    - php: nightly
+  fast_finish: true
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
   - travis_retry composer self-update
-  - travis_retry composer install --no-interaction --prefer-source --dev
+
+install:
+  - if [ "$IGNORE_PLATFORMS" == "true" ]; then travis_retry composer update --no-interaction --prefer-source --ignore-platform-reqs; fi
+  - if [ "$IGNORE_PLATFORMS" == "false" ]; then travis_retry composer update --no-interaction --prefer-source; fi
 
 script:
-  - phpunit --coverage-text
-  - ./vendor/bin/phpcs src --standard=psr2
+  - composer phpunit
+  - if [ "$VALIDATE_CODING_STYLE" == "true" ]; then composer phpcs; fi
+  - if [ "$RUN_PHPSTAN" == "true" ]; then composer phpstan; fi

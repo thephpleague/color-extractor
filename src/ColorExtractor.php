@@ -1,17 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\ColorExtractor;
 
-class ColorExtractor
-{
-    /** @var \League\ColorExtractor\Palette */
-    protected $palette;
+use SplFixedArray;
+use SplPriorityQueue;
 
-    /** @var \SplFixedArray */
-    protected $sortedColors;
+final class ColorExtractor
+{
+    /**
+     * @var Palette
+     */
+    private $palette;
 
     /**
-     * @param \League\ColorExtractor\Palette $palette
+     * @var SplFixedArray
+     */
+    private $sortedColors;
+
+    /**
+     * @param Palette $palette
      */
     public function __construct(Palette $palette)
     {
@@ -23,29 +32,20 @@ class ColorExtractor
      *
      * @return array
      */
-    public function extract($colorCount = 1)
+    public function extract(int $colorCount = 1): array
     {
-        if (!$this->isInitialized()) {
+        if (null === $this->sortedColors) {
             $this->initialize();
         }
 
         return self::mergeColors($this->sortedColors, $colorCount, 100 / $colorCount);
     }
 
-    /**
-     * @return bool
-     */
-    protected function isInitialized()
+    private function initialize()
     {
-        return $this->sortedColors !== null;
-    }
+        $queue = new SplPriorityQueue();
+        $this->sortedColors = new SplFixedArray(count($this->palette));
 
-    protected function initialize()
-    {
-        $queue = new \SplPriorityQueue();
-        $this->sortedColors = new \SplFixedArray(count($this->palette));
-
-        $i = 0;
         foreach ($this->palette as $color => $count) {
             $labColor = self::intColorToLab($color);
             $queue->insert(
@@ -54,7 +54,6 @@ class ColorExtractor
                 (1 - $labColor['L'] / 200) *
                 sqrt($count)
             );
-            ++$i;
         }
 
         $i = 0;
@@ -66,19 +65,19 @@ class ColorExtractor
     }
 
     /**
-     * @param \SplFixedArray $colors
-     * @param int            $limit
-     * @param int            $maxDelta
+     * @param SplFixedArray $colors
+     * @param int           $limit
+     * @param float         $maxDelta
      *
      * @return array
      */
-    protected static function mergeColors(\SplFixedArray $colors, $limit, $maxDelta)
+    private static function mergeColors(SplFixedArray $colors, int $limit, float $maxDelta): array
     {
         $limit = min(count($colors), $limit);
-        if ($limit === 1) {
+        if (1 === $limit) {
             return [$colors[0]];
         }
-        $labCache = new \SplFixedArray($limit - 1);
+        $labCache = new SplFixedArray($limit - 1);
         $mergedColors = [];
 
         foreach ($colors as $color) {
@@ -87,7 +86,7 @@ class ColorExtractor
             $colorLab = self::intColorToLab($color);
 
             foreach ($mergedColors as $i => $mergedColor) {
-                if (self::ciede2000DeltaE($colorLab, $labCache[$i]) < $maxDelta) {
+                if (self::ciede2000DeltaE($colorLab, $labCache[$i]) < (int) $maxDelta) {
                     $hasColorBeenMerged = true;
                     break;
                 }
@@ -116,7 +115,7 @@ class ColorExtractor
      *
      * @return float
      */
-    protected static function ciede2000DeltaE($firstLabColor, $secondLabColor)
+    private static function ciede2000DeltaE(array $firstLabColor, array $secondLabColor): float
     {
         $C1 = sqrt(pow($firstLabColor['a'], 2) + pow($firstLabColor['b'], 2));
         $C2 = sqrt(pow($secondLabColor['a'], 2) + pow($secondLabColor['b'], 2));
@@ -130,13 +129,13 @@ class ColorExtractor
         $C1p = sqrt(pow($a1p, 2) + pow($firstLabColor['b'], 2));
         $C2p = sqrt(pow($a2p, 2) + pow($secondLabColor['b'], 2));
 
-        $h1p = $a1p == 0 && $firstLabColor['b'] == 0 ? 0 : atan2($firstLabColor['b'], $a1p);
-        $h2p = $a2p == 0 && $secondLabColor['b'] == 0 ? 0 : atan2($secondLabColor['b'], $a2p);
+        $h1p = 0 == $a1p && 0 == $firstLabColor['b'] ? 0 : atan2($firstLabColor['b'], $a1p);
+        $h2p = 0 == $a2p && 0 == $secondLabColor['b'] ? 0 : atan2($secondLabColor['b'], $a2p);
 
         $LpDelta = $secondLabColor['L'] - $firstLabColor['L'];
         $CpDelta = $C2p - $C1p;
 
-        if ($C1p * $C2p == 0) {
+        if (0 == $C1p * $C2p) {
             $hpDelta = 0;
         } elseif (abs($h2p - $h1p) <= 180) {
             $hpDelta = $h2p - $h1p;
@@ -151,7 +150,7 @@ class ColorExtractor
         $Lbp = ($firstLabColor['L'] + $secondLabColor['L']) / 2;
         $Cbp = ($C1p + $C2p) / 2;
 
-        if ($C1p * $C2p == 0) {
+        if (0 == $C1p * $C2p) {
             $hbp = $h1p + $h2p;
         } elseif (abs($h1p - $h2p) <= 180) {
             $hbp = ($h1p + $h2p) / 2;
@@ -186,19 +185,13 @@ class ColorExtractor
      *
      * @return array
      */
-    protected static function intColorToLab($color)
+    private static function intColorToLab(int $color): array
     {
-        return self::xyzToLab(
-            self::srgbToXyz(
-                self::rgbToSrgb(
-                    [
-                        'R' => ($color >> 16) & 0xFF,
-                        'G' => ($color >> 8) & 0xFF,
-                        'B' => $color & 0xFF,
-                    ]
-                )
-            )
-        );
+        return self::xyzToLab(self::srgbToXyz(self::rgbToSrgb([
+            'R' => ($color >> 16) & 0xFF,
+            'G' => ($color >> 8) & 0xFF,
+            'B' => $color & 0xFF,
+        ])));
     }
 
     /**
@@ -206,7 +199,7 @@ class ColorExtractor
      *
      * @return float
      */
-    protected static function rgbToSrgbStep($value)
+    private static function rgbToSrgbStep(int $value): float
     {
         $value /= 255;
 
@@ -220,7 +213,7 @@ class ColorExtractor
      *
      * @return array
      */
-    protected static function rgbToSrgb($rgb)
+    private static function rgbToSrgb(array $rgb): array
     {
         return [
             'R' => self::rgbToSrgbStep($rgb['R']),
@@ -234,7 +227,7 @@ class ColorExtractor
      *
      * @return array
      */
-    protected static function srgbToXyz($rgb)
+    private static function srgbToXyz(array $rgb): array
     {
         return [
             'X' => (.4124564 * $rgb['R']) + (.3575761 * $rgb['G']) + (.1804375 * $rgb['B']),
@@ -248,7 +241,7 @@ class ColorExtractor
      *
      * @return float
      */
-    protected static function xyzToLabStep($value)
+    private static function xyzToLabStep(float $value): float
     {
         return $value > 216 / 24389 ? pow($value, 1 / 3) : 841 * $value / 108 + 4 / 29;
     }
@@ -258,7 +251,7 @@ class ColorExtractor
      *
      * @return array
      */
-    protected static function xyzToLab($xyz)
+    private static function xyzToLab(array $xyz): array
     {
         //http://en.wikipedia.org/wiki/Illuminant_D65#Definition
         $Xn = .95047;
