@@ -54,7 +54,7 @@ class Palette implements \Countable, \IteratorAggregate
     public static function fromFilename($filename, $backgroundColor = null)
     {
         if (!is_readable($filename)) {
-            throw new \InvalidArgumentException('Filename must be a valid readable');
+            throw new \InvalidArgumentException('Filename must be a valid path and should be readable');
         }
         $image = imagecreatefromstring(file_get_contents($filename));
         $palette = self::fromGD($image, $backgroundColor);
