@@ -1,0 +1,8 @@
+includes:
+- vendor/phpstan/phpstan-strict-rules/rules.neon
+parameters:
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    ignoreErrors:
+        - '#Call to function is_resource\(\) with resource will always evaluate to true.#'
+    reportUnmatchedIgnoredErrors: true

@@ -4,26 +4,22 @@ namespace League\ColorExtractor;
 
 class ColorExtractor
 {
-    /** @var \League\ColorExtractor\Palette */
+    /**
+     * @var Palette
+     */
     protected $palette;
 
-    /** @var \SplFixedArray */
+    /**
+     * @var \SplFixedArray
+     */
     protected $sortedColors;
 
-    /**
-     * @param \League\ColorExtractor\Palette $palette
-     */
     public function __construct(Palette $palette)
     {
         $this->palette = $palette;
     }
 
-    /**
-     * @param int $colorCount
-     *
-     * @return array
-     */
-    public function extract($colorCount = 1)
+    public function extract(int $colorCount = 1): array
     {
         if (!$this->isInitialized()) {
             $this->initialize();
@@ -32,15 +28,12 @@ class ColorExtractor
         return self::mergeColors($this->sortedColors, $colorCount, 100 / $colorCount);
     }
 
-    /**
-     * @return bool
-     */
-    protected function isInitialized()
+    protected function isInitialized(): bool
     {
-        return $this->sortedColors !== null;
+        return null !== $this->sortedColors;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $queue = new \SplPriorityQueue();
         $this->sortedColors = new \SplFixedArray(count($this->palette));
@@ -50,7 +43,7 @@ class ColorExtractor
             $labColor = self::intColorToLab($color);
             $queue->insert(
                 $color,
-                (sqrt($labColor['a'] * $labColor['a'] + $labColor['b'] * $labColor['b']) ?: 1) *
+                (sqrt($labColor['a'] * $labColor['a'] + $labColor['b'] * $labColor['b']) ?? 1) *
                 (1 - $labColor['L'] / 200) *
                 sqrt($count)
             );
@@ -65,17 +58,10 @@ class ColorExtractor
         }
     }
 
-    /**
-     * @param \SplFixedArray $colors
-     * @param int            $limit
-     * @param int            $maxDelta
-     *
-     * @return array
-     */
-    protected static function mergeColors(\SplFixedArray $colors, $limit, $maxDelta)
+    protected static function mergeColors(\SplFixedArray $colors, int $limit, int $maxDelta): array
     {
         $limit = min(count($colors), $limit);
-        if ($limit === 1) {
+        if (1 === $limit) {
             return [$colors[0]];
         }
         $labCache = new \SplFixedArray($limit - 1);
@@ -110,13 +96,7 @@ class ColorExtractor
         return $mergedColors;
     }
 
-    /**
-     * @param array $firstLabColor
-     * @param array $secondLabColor
-     *
-     * @return float
-     */
-    protected static function ciede2000DeltaE($firstLabColor, $secondLabColor)
+    protected static function ciede2000DeltaE(array $firstLabColor, array $secondLabColor): float
     {
         $C1 = sqrt(pow($firstLabColor['a'], 2) + pow($firstLabColor['b'], 2));
         $C2 = sqrt(pow($secondLabColor['a'], 2) + pow($secondLabColor['b'], 2));
@@ -130,13 +110,13 @@ class ColorExtractor
         $C1p = sqrt(pow($a1p, 2) + pow($firstLabColor['b'], 2));
         $C2p = sqrt(pow($a2p, 2) + pow($secondLabColor['b'], 2));
 
-        $h1p = $a1p == 0 && $firstLabColor['b'] == 0 ? 0 : atan2($firstLabColor['b'], $a1p);
-        $h2p = $a2p == 0 && $secondLabColor['b'] == 0 ? 0 : atan2($secondLabColor['b'], $a2p);
+        $h1p = 0 == $a1p && 0 == $firstLabColor['b'] ? 0 : atan2($firstLabColor['b'], $a1p);
+        $h2p = 0 == $a2p && 0 == $secondLabColor['b'] ? 0 : atan2($secondLabColor['b'], $a2p);
 
         $LpDelta = $secondLabColor['L'] - $firstLabColor['L'];
         $CpDelta = $C2p - $C1p;
 
-        if ($C1p * $C2p == 0) {
+        if (0 == $C1p * $C2p) {
             $hpDelta = 0;
         } elseif (abs($h2p - $h1p) <= 180) {
             $hpDelta = $h2p - $h1p;
@@ -151,7 +131,7 @@ class ColorExtractor
         $Lbp = ($firstLabColor['L'] + $secondLabColor['L']) / 2;
         $Cbp = ($C1p + $C2p) / 2;
 
-        if ($C1p * $C2p == 0) {
+        if (0 == $C1p * $C2p) {
             $hbp = $h1p + $h2p;
         } elseif (abs($h1p - $h2p) <= 180) {
             $hbp = ($h1p + $h2p) / 2;
@@ -182,11 +162,9 @@ class ColorExtractor
     }
 
     /**
-     * @param int $color
-     *
-     * @return array
+     * @return array{L:float, a:float, b:float}
      */
-    protected static function intColorToLab($color)
+    protected static function intColorToLab(int $color): array
     {
         return self::xyzToLab(
             self::srgbToXyz(
@@ -201,12 +179,7 @@ class ColorExtractor
         );
     }
 
-    /**
-     * @param int $value
-     *
-     * @return float
-     */
-    protected static function rgbToSrgbStep($value)
+    protected static function rgbToSrgbStep(int $value): float
     {
         $value /= 255;
 
@@ -216,11 +189,11 @@ class ColorExtractor
     }
 
     /**
-     * @param array $rgb
+     * @param array{R:int, G:int, B:int} $rgb
      *
-     * @return array
+     * @return array{R:float, G:float, B:float}
      */
-    protected static function rgbToSrgb($rgb)
+    protected static function rgbToSrgb(array $rgb): array
     {
         return [
             'R' => self::rgbToSrgbStep($rgb['R']),
@@ -230,9 +203,9 @@ class ColorExtractor
     }
 
     /**
-     * @param array $rgb
+     * @param array{R:float, G:float, B:float} $rgb
      *
-     * @return array
+     * @return array{X:float, Y:float, Z:float}
      */
     protected static function srgbToXyz($rgb)
     {
@@ -243,22 +216,17 @@ class ColorExtractor
         ];
     }
 
-    /**
-     * @param float $value
-     *
-     * @return float
-     */
-    protected static function xyzToLabStep($value)
+    protected static function xyzToLabStep(float $value): float
     {
         return $value > 216 / 24389 ? pow($value, 1 / 3) : 841 * $value / 108 + 4 / 29;
     }
 
     /**
-     * @param array $xyz
+     * @param array{X:float, Y:float, Z:float} $xyz
      *
-     * @return array
+     * @return array{L:float, a:float, b:float}
      */
-    protected static function xyzToLab($xyz)
+    protected static function xyzToLab(array $xyz): array
     {
         //http://en.wikipedia.org/wiki/Illuminant_D65#Definition
         $Xn = .95047;

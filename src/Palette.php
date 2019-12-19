@@ -4,54 +4,43 @@ namespace League\ColorExtractor;
 
 class Palette implements \Countable, \IteratorAggregate
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $colors;
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         return count($this->colors);
     }
 
-    /**
-     * @return \ArrayIterator
-     */
-    public function getIterator()
+    public function getIterator(): \Iterator
     {
         return new \ArrayIterator($this->colors);
     }
 
-    /**
-     * @param int $color
-     *
-     * @return int
-     */
-    public function getColorCount($color)
+    public function getColorCount(int $color): int
     {
         return $this->colors[$color];
     }
 
-    /**
-     * @param int $limit = null
-     *
-     * @return array
-     */
-    public function getMostUsedColors($limit = null)
+    public function getMostUsedColors(?int $limit = null): array
     {
         return array_slice($this->colors, 0, $limit, true);
     }
 
-    /**
-     * @param string   $filename
-     * @param int|null $backgroundColor
-     *
-     * @return Palette
-     */
-    public static function fromFilename($filename, $backgroundColor = null)
+    public static function fromFilename(string $filename, ?int $backgroundColor = null): Palette
     {
-        $image = imagecreatefromstring(file_get_contents($filename));
+        $content = file_get_contents($filename);
+        if (false === $content) {
+            throw new \InvalidArgumentException('Can not extract content from the given file path.');
+        }
+
+        $image = imagecreatefromstring($content);
+        if (false === $image) {
+            throw new \InvalidArgumentException('Can not extract image from the given file path.');
+        }
+
         $palette = self::fromGD($image, $backgroundColor);
         imagedestroy($image);
 
@@ -60,18 +49,15 @@ class Palette implements \Countable, \IteratorAggregate
 
     /**
      * @param resource $image
-     * @param int|null $backgroundColor
-     *
-     * @return Palette
      *
      * @throws \InvalidArgumentException
      */
-    public static function fromGD($image, $backgroundColor = null)
+    public static function fromGD($image, ?int $backgroundColor = null): Palette
     {
-        if (!is_resource($image) || get_resource_type($image) != 'gd') {
+        if (!is_resource($image) || 'gd' != get_resource_type($image)) {
             throw new \InvalidArgumentException('Image must be a gd resource');
         }
-        if ($backgroundColor !== null && (!is_numeric($backgroundColor) || $backgroundColor < 0 || $backgroundColor > 16777215)) {
+        if (null !== $backgroundColor && ($backgroundColor < 0 || $backgroundColor > 16777215)) {
             throw new \InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
         }
 
@@ -97,8 +83,9 @@ class Palette implements \Countable, \IteratorAggregate
                              ($colorComponents['blue']);
                 }
 
-                if ($alpha = $color >> 24) {
-                    if ($backgroundColor === null) {
+                $alpha = $color >> 24;
+                if (0 !== $alpha) {
+                    if (null === $backgroundColor) {
                         continue;
                     }
 
@@ -109,7 +96,7 @@ class Palette implements \Countable, \IteratorAggregate
                 }
 
                 isset($palette->colors[$color]) ?
-                    $palette->colors[$color] += 1 :
+                    ++$palette->colors[$color] :
                     $palette->colors[$color] = 1;
             }
         }
