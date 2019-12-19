@@ -45,7 +45,7 @@
             "@phpstan-src",
             "@phpstan-tests"
         ],
-        "phpunit": "phpunit --coverage-text",
+        "phpunit": "phpunit",
         "test": [
             "@phpcs",
             "@phpstan",
