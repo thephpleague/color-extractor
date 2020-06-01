@@ -75,6 +75,9 @@ class ColorExtractor
     protected static function mergeColors(\SplFixedArray $colors, $limit, $maxDelta)
     {
         $limit = min(count($colors), $limit);
+        if ($limit === 0) {
+            return [];
+        }
         if ($limit === 1) {
             return [$colors[0]];
         }
