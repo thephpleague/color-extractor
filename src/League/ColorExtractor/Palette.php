@@ -68,7 +68,7 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromGD($image, $backgroundColor = null)
     {
-        if (!is_resource($image) || get_resource_type($image) != 'gd') {
+        if (!(is_resource($image) || $image instanceof \GdImage)) {
             throw new \InvalidArgumentException('Image must be a gd resource');
         }
         if ($backgroundColor !== null && (!is_numeric($backgroundColor) || $backgroundColor < 0 || $backgroundColor > 16777215)) {
