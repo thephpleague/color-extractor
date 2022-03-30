@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="tests/bootstrap.php">
-    <testsuites>
-        <testsuite name="ColorExtractor Test Suite">
-            <directory>tests/League/ColorExtractor</directory>
-        </testsuite>
-    </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src/League/ColorExtractor</directory>
-        </whitelist>
-    </filter>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" colors="true" bootstrap="tests/bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">src/League/ColorExtractor</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="ColorExtractor Test Suite">
+      <directory>tests/League/ColorExtractor</directory>
+    </testsuite>
+  </testsuites>
 </phpunit>
