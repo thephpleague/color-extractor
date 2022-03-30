@@ -5,8 +5,9 @@ namespace League\ColorExtractor\Test;
 use League\ColorExtractor\Color;
 use League\ColorExtractor\ColorExtractor;
 use League\ColorExtractor\Palette;
+use PHPUnit\Framework\TestCase;
 
-class PaletteTest extends \PHPUnit_Framework_TestCase
+class PaletteTest extends TestCase
 {
     protected $jpegPath = './tests/assets/test.jpeg';
     protected $gifPath = './tests/assets/test.gif';
@@ -18,7 +19,7 @@ class PaletteTest extends \PHPUnit_Framework_TestCase
         $extractor = new ColorExtractor(Palette::fromFilename($this->jpegPath));
         $colors = $extractor->extract(1);
 
-        $this->assertInternalType('array', $colors);
+        $this->assertIsArray($colors);
         $this->assertCount(1, $colors);
         $this->assertEquals(15985688, $colors[0]);
     }
@@ -28,7 +29,7 @@ class PaletteTest extends \PHPUnit_Framework_TestCase
         $extractor = new ColorExtractor(Palette::fromFilename($this->gifPath));
         $colors = $extractor->extract(1);
 
-        $this->assertInternalType('array', $colors);
+        $this->assertIsArray($colors);
         $this->assertCount(1, $colors);
         $this->assertEquals(12022491, $colors[0]);
     }
@@ -38,7 +39,7 @@ class PaletteTest extends \PHPUnit_Framework_TestCase
         $extractor = new ColorExtractor(Palette::fromFilename($this->pngPath));
         $colors = $extractor->extract(1);
 
-        $this->assertInternalType('array', $colors);
+        $this->assertIsArray($colors);
         $this->assertCount(1, $colors);
         $this->assertEquals(14024704, $colors[0]);
     }
@@ -49,7 +50,7 @@ class PaletteTest extends \PHPUnit_Framework_TestCase
         $numColors = 3;
         $colors = $extractor->extract($numColors);
 
-        $this->assertInternalType('array', $colors);
+        $this->assertIsArray($colors);
         $this->assertCount($numColors, $colors);
         $this->assertEquals($colors, [14024704, 3407872, 7111569]);
     }
