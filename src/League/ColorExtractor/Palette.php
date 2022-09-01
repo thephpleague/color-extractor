@@ -2,30 +2,33 @@
 
 namespace League\ColorExtractor;
 
+
+
 class Palette implements \Countable, \IteratorAggregate
 {
-    /** @var array */
-    protected $colors;
-
-    /**
+    /** 
+     * @var array
+     */
+    protected $colors = [];
+    
+    /** 
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count(): int
     {
         return count($this->colors);
     }
 
-    /**
-     * @return \ArrayIterator
+    /** 
+     * @return \Traversable
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->colors);
     }
-
-    /**
-     * @param int $color
-     *
+    
+    /** 
      * @return int
      */
     public function getColorCount($color)
@@ -59,14 +62,14 @@ class Palette implements \Countable, \IteratorAggregate
     }
 
     /**
-     * @param resource $image
+     * @param \GDImage|resource $image
      * @param int|null $backgroundColor
      *
      * @return Palette
      *
      * @throws \InvalidArgumentException
      */
-    public static function fromGD($image, $backgroundColor = null)
+    public static function fromGD($image, ?int $backgroundColor = null)
     {
         if (!$image instanceof \GDImage && (!is_resource($image) || get_resource_type($image) !== 'gd')) {
             throw new \InvalidArgumentException('Image must be a gd resource');
