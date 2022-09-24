@@ -25,6 +25,10 @@ class ColorExtractor
      */
     public function extract($colorCount = 1)
     {
+        if ($colorCount === 0) {
+            return [];
+        }
+
         if (!$this->isInitialized()) {
             $this->initialize();
         }
