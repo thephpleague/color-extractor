@@ -12,6 +12,7 @@ class PaletteTest extends TestCase
     protected $jpegPath = './tests/assets/test.jpeg';
     protected $gifPath = './tests/assets/test.gif';
     protected $pngPath = './tests/assets/test.png';
+    protected $webpPath = './tests/assets/test.webp';
     protected $transparentPngPath = './tests/assets/red-transparent-50.png';
 
     public function testJpegExtractSingleColor()
@@ -42,6 +43,16 @@ class PaletteTest extends TestCase
         $this->assertIsArray($colors);
         $this->assertCount(1, $colors);
         $this->assertEquals(14024704, $colors[0]);
+    }
+
+    public function testWebpExtractSingleColor()
+    {
+        $extractor = new ColorExtractor(Palette::fromFilename($this->webpPath));
+        $colors = $extractor->extract(1);
+
+        $this->assertInternalType('array', $colors);
+        $this->assertCount(1, $colors);
+        $this->assertEquals(15008271, $colors[0]);
     }
 
     public function testJpegExtractMultipleColors()
