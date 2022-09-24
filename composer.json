@@ -24,6 +24,9 @@
         "friendsofphp/php-cs-fixer": "~2",
         "phpunit/phpunit": "^9.5"
     },
+    "suggest": {
+        "ext-curl": "To download images from remote URLs if allow_url_fopen is disabled for security reasons"
+    },
     "autoload": {
         "psr-4": {
             "League\\ColorExtractor\\": "src"

@@ -64,6 +64,35 @@ class Palette implements \Countable, \IteratorAggregate
     }
 
     /**
+     * @param string   $url
+     * @param int|null $backgroundColor
+     *
+     * @return Palette
+     *
+     * @throws \RuntimeException
+     */
+    public static function fromUrl($url, $backgroundColor = null)
+    {
+        if (!function_exists('curl_init')){
+            return self::fromContents(file_get_contents($url));
+        }
+
+        $ch = curl_init();
+        try {
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $contents = curl_exec($ch);
+            if ($contents === false) {
+                throw new \RuntimeException('Failed to fetch image from URL');
+            }
+        } finally {
+            curl_close($ch);
+        }
+
+        return self::fromContents($contents, $backgroundColor);
+    }
+
+    /**
      * Create instance with file contents
      *
      * @param string $contents
