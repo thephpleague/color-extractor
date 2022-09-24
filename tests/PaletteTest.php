@@ -1,6 +1,6 @@
 <?php
 
-namespace League\ColorExtractor\Test;
+namespace League\ColorExtractor\Tests;
 
 use League\ColorExtractor\Color;
 use League\ColorExtractor\ColorExtractor;
@@ -9,11 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 class PaletteTest extends TestCase
 {
-    protected $jpegPath = './tests/assets/test.jpeg';
-    protected $gifPath = './tests/assets/test.gif';
-    protected $pngPath = './tests/assets/test.png';
-    protected $webpPath = './tests/assets/test.webp';
-    protected $transparentPngPath = './tests/assets/red-transparent-50.png';
+    protected $jpegPath = __DIR__ . '/assets/test.jpeg';
+    protected $gifPath = __DIR__ . '/assets/test.gif';
+    protected $pngPath = __DIR__ . '/assets/test.png';
+    protected $webpPath = __DIR__ . '/assets/test.webp';
+    protected $transparentPngPath = __DIR__ . '/assets/red-transparent-50.png';
 
     public function testJpegExtractSingleColor()
     {

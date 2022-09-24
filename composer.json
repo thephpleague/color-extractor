@@ -26,7 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "": "src"
+            "League\\ColorExtractor\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "League\\ColorExtractor\\Tests\\": "tests"
         }
     }
 }
