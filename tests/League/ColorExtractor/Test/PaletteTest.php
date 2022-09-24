@@ -50,7 +50,7 @@ class PaletteTest extends TestCase
         $extractor = new ColorExtractor(Palette::fromFilename($this->webpPath));
         $colors = $extractor->extract(1);
 
-        $this->assertInternalType('array', $colors);
+        $this->assertIsArray($colors);
         $this->assertCount(1, $colors);
         $this->assertEquals(15008271, $colors[0]);
     }
