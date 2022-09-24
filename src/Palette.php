@@ -33,6 +33,10 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public function getColorCount($color)
     {
+        if (!array_key_exists($color, $this->colors)) {
+            return 0;
+        }
+
         return $this->colors[$color];
     }
 
