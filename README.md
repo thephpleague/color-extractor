@@ -1,7 +1,7 @@
 ColorExtractor
 ==============
 
-[![Build Status](https://travis-ci.org/thephpleague/color-extractor.png?branch=master)](https://travis-ci.org/thephpleague/color-extractor)
+![Build Status](https://github.com/thephpleague/color-extractor/actions/workflows/run-tests.yml/badge.svg)
 [![Total Downloads](https://poser.pugx.org/league/color-extractor/downloads.png)](https://packagist.org/packages/league/color-extractor)
 [![Latest Stable Version](https://poser.pugx.org/league/color-extractor/v/stable.png)](https://packagist.org/packages/league/color-extractor)
 
@@ -12,7 +12,7 @@ Extract colors from an image like a human would do.
 Via Composer
 
 ``` bash
-$ composer require league/color-extractor:0.3.*
+$ composer require league/color-extractor:0.4.*
 ```
 
 ## Usage
