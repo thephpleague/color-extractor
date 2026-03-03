@@ -6,12 +6,12 @@ namespace League\ColorExtractor;
 
 class Palette implements \Countable, \IteratorAggregate
 {
-    /** 
+    /**
      * @var array
      */
     protected $colors = [];
-    
-    /** 
+
+    /**
      * @return int
      */
     #[\ReturnTypeWillChange]
@@ -20,15 +20,15 @@ class Palette implements \Countable, \IteratorAggregate
         return count($this->colors);
     }
 
-    /** 
+    /**
      * @return \Traversable
      */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->colors);
     }
-    
-    /** 
+
+    /**
      * @return int
      */
     public function getColorCount($color)
@@ -55,7 +55,7 @@ class Palette implements \Countable, \IteratorAggregate
      * @param int|null $backgroundColor
      *
      * @return Palette
-     * 
+     *
      * @throws \InvalidArgumentException
      */
     public static function fromFilename($filename, $backgroundColor = null)
@@ -107,7 +107,10 @@ class Palette implements \Countable, \IteratorAggregate
     public static function fromContents($contents, $backgroundColor = null) {
         $image = imagecreatefromstring($contents);
         $palette = self::fromGD($image, $backgroundColor);
-        imagedestroy($image);
+
+        if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+            imagedestroy($image);
+        }
 
         return $palette;
     }
