@@ -1,0 +1,9 @@
+{
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "3.4.0"
+    },
+    "config": {
+        "bin-dir": "../../vendor/bin",
+        "optimize-autoloader": true
+    }
+}

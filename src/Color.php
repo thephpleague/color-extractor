@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\ColorExtractor;
 
 class Color
@@ -40,8 +42,6 @@ class Color
     }
 
     /**
-     * @param array $components
-     *
      * @return int
      */
     public static function fromRgbToInt(array $components)

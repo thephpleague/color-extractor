@@ -1,8 +1,8 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\ColorExtractor;
-
-
 
 class Palette implements \Countable, \IteratorAggregate
 {
@@ -11,18 +11,12 @@ class Palette implements \Countable, \IteratorAggregate
      */
     protected $colors = [];
 
-    /**
-     * @return int
-     */
     #[\ReturnTypeWillChange]
     public function count(): int
     {
-        return count($this->colors);
+        return \count($this->colors);
     }
 
-    /**
-     * @return \Traversable
-     */
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->colors);
@@ -33,7 +27,7 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public function getColorCount($color)
     {
-        if (!array_key_exists($color, $this->colors)) {
+        if (!\array_key_exists($color, $this->colors)) {
             return 0;
         }
 
@@ -47,7 +41,7 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public function getMostUsedColors($limit = null)
     {
-        return array_slice($this->colors, 0, $limit, true);
+        return \array_slice($this->colors, 0, $limit, true);
     }
 
     /**
@@ -77,16 +71,16 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromUrl($url, $backgroundColor = null)
     {
-        if (!function_exists('curl_init')){
+        if (!\function_exists('curl_init')) {
             return self::fromContents(file_get_contents($url));
         }
 
         $ch = curl_init();
         try {
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, \CURLOPT_URL, $url);
+            curl_setopt($ch, \CURLOPT_RETURNTRANSFER, true);
             $contents = curl_exec($ch);
-            if ($contents === false) {
+            if (false === $contents) {
                 throw new \RuntimeException('Failed to fetch image from URL');
             }
         } finally {
@@ -97,18 +91,19 @@ class Palette implements \Countable, \IteratorAggregate
     }
 
     /**
-     * Create instance with file contents
+     * Create instance with file contents.
      *
-     * @param string $contents
-     * @param int|null  $backgroundColor
+     * @param string   $contents
+     * @param int|null $backgroundColor
      *
      * @return Palette
      */
-    public static function fromContents($contents, $backgroundColor = null) {
+    public static function fromContents($contents, $backgroundColor = null)
+    {
         $image = imagecreatefromstring($contents);
         $palette = self::fromGD($image, $backgroundColor);
 
-        if (version_compare(PHP_VERSION, '8.0.0', '<')) {
+        if (version_compare(\PHP_VERSION, '8.0.0', '<')) {
             imagedestroy($image);
         }
 
@@ -117,7 +112,6 @@ class Palette implements \Countable, \IteratorAggregate
 
     /**
      * @param \GDImage|resource $image
-     * @param int|null $backgroundColor
      *
      * @return Palette
      *
@@ -125,10 +119,10 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromGD($image, ?int $backgroundColor = null)
     {
-        if (!$image instanceof \GDImage && (!is_resource($image) || get_resource_type($image) !== 'gd')) {
+        if (!$image instanceof \GDImage && (!\is_resource($image) || 'gd' !== get_resource_type($image))) {
             throw new \InvalidArgumentException('Image must be a gd resource');
         }
-        if ($backgroundColor !== null && (!is_numeric($backgroundColor) || $backgroundColor < 0 || $backgroundColor > 16777215)) {
+        if (null !== $backgroundColor && (!is_numeric($backgroundColor) || $backgroundColor < 0 || $backgroundColor > 16777215)) {
             throw new \InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
         }
 
@@ -155,7 +149,7 @@ class Palette implements \Countable, \IteratorAggregate
                 }
 
                 if ($alpha = $color >> 24) {
-                    if ($backgroundColor === null) {
+                    if (null === $backgroundColor) {
                         continue;
                     }
 
@@ -166,7 +160,7 @@ class Palette implements \Countable, \IteratorAggregate
                 }
 
                 isset($palette->colors[$color]) ?
-                    $palette->colors[$color] += 1 :
+                    ++$palette->colors[$color] :
                     $palette->colors[$color] = 1;
             }
         }

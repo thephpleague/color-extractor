@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace League\ColorExtractor;
 
 class ColorExtractor
@@ -25,7 +27,7 @@ class ColorExtractor
      */
     public function extract($colorCount = 1)
     {
-        if ($colorCount === 0) {
+        if (0 === $colorCount) {
             return [];
         }
 
@@ -41,13 +43,13 @@ class ColorExtractor
      */
     protected function isInitialized()
     {
-        return $this->sortedColors !== null;
+        return null !== $this->sortedColors;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         $queue = new \SplPriorityQueue();
-        $this->sortedColors = new \SplFixedArray(count($this->palette));
+        $this->sortedColors = new \SplFixedArray(\count($this->palette));
 
         $i = 0;
         foreach ($this->palette as $color => $count) {
@@ -70,19 +72,18 @@ class ColorExtractor
     }
 
     /**
-     * @param \SplFixedArray $colors
-     * @param int            $limit
-     * @param int            $maxDelta
+     * @param int $limit
+     * @param int $maxDelta
      *
      * @return array
      */
     protected static function mergeColors(\SplFixedArray $colors, $limit, $maxDelta)
     {
-        $limit = min(count($colors), $limit);
-        if ($limit === 0) {
+        $limit = min(\count($colors), $limit);
+        if (0 === $limit) {
             return [];
         }
-        if ($limit === 1) {
+        if (1 === $limit) {
             return [$colors[0]];
         }
         $labCache = new \SplFixedArray($limit - 1);
@@ -104,7 +105,7 @@ class ColorExtractor
                 continue;
             }
 
-            $mergedColorCount = count($mergedColors);
+            $mergedColorCount = \count($mergedColors);
             $mergedColors[] = $color;
 
             if ($mergedColorCount + 1 == $limit) {
@@ -125,17 +126,17 @@ class ColorExtractor
      */
     protected static function ciede2000DeltaE($firstLabColor, $secondLabColor)
     {
-        $C1 = sqrt(pow($firstLabColor['a'], 2) + pow($firstLabColor['b'], 2));
-        $C2 = sqrt(pow($secondLabColor['a'], 2) + pow($secondLabColor['b'], 2));
+        $C1 = sqrt($firstLabColor['a'] ** 2 + $firstLabColor['b'] ** 2);
+        $C2 = sqrt($secondLabColor['a'] ** 2 + $secondLabColor['b'] ** 2);
         $Cb = ($C1 + $C2) / 2;
 
-        $G = .5 * (1 - sqrt(pow($Cb, 7) / (pow($Cb, 7) + pow(25, 7))));
+        $G = .5 * (1 - sqrt($Cb ** 7 / ($Cb ** 7 + 25 ** 7)));
 
         $a1p = (1 + $G) * $firstLabColor['a'];
         $a2p = (1 + $G) * $secondLabColor['a'];
 
-        $C1p = sqrt(pow($a1p, 2) + pow($firstLabColor['b'], 2));
-        $C2p = sqrt(pow($a2p, 2) + pow($secondLabColor['b'], 2));
+        $C1p = sqrt($a1p ** 2 + $firstLabColor['b'] ** 2);
+        $C2p = sqrt($a2p ** 2 + $secondLabColor['b'] ** 2);
 
         $h1p = rad2deg(atan2($firstLabColor['b'], $a1p));
         if ($h1p < 0) {
@@ -149,7 +150,7 @@ class ColorExtractor
         $LpDelta = $secondLabColor['L'] - $firstLabColor['L'];
         $CpDelta = $C2p - $C1p;
 
-        if ($C1p * $C2p == 0) {
+        if (0 == $C1p * $C2p) {
             $hpDelta = 0;
         } elseif (abs($h2p - $h1p) <= 180) {
             $hpDelta = $h2p - $h1p;
@@ -164,7 +165,7 @@ class ColorExtractor
         $Lbp = ($firstLabColor['L'] + $secondLabColor['L']) / 2;
         $Cbp = ($C1p + $C2p) / 2;
 
-        if ($C1p * $C2p == 0) {
+        if (0 == $C1p * $C2p) {
             $hbp = $h1p + $h2p;
         } elseif (abs($h1p - $h2p) <= 180) {
             $hbp = ($h1p + $h2p) / 2;
@@ -176,20 +177,20 @@ class ColorExtractor
 
         $T = 1 - .17 * cos(deg2rad($hbp - 30)) + .24 * cos(deg2rad(2 * $hbp)) + .32 * cos(deg2rad(3 * $hbp + 6)) - .2 * cos(deg2rad(4 * $hbp - 63));
 
-        $sigmaDelta = 30 * exp(-pow(($hbp - 275) / 25, 2));
+        $sigmaDelta = 30 * exp(-(($hbp - 275) / 25) ** 2);
 
-        $Rc = 2 * sqrt(pow($Cbp, 7) / (pow($Cbp, 7) + pow(25, 7)));
+        $Rc = 2 * sqrt($Cbp ** 7 / ($Cbp ** 7 + 25 ** 7));
 
-        $Sl = 1 + ((.015 * pow($Lbp - 50, 2)) / sqrt(20 + pow($Lbp - 50, 2)));
+        $Sl = 1 + ((.015 * ($Lbp - 50) ** 2) / sqrt(20 + ($Lbp - 50) ** 2));
         $Sc = 1 + .045 * $Cbp;
         $Sh = 1 + .015 * $Cbp * $T;
 
         $Rt = -sin(deg2rad(2 * $sigmaDelta)) * $Rc;
 
         return sqrt(
-            pow($LpDelta / $Sl, 2) +
-            pow($CpDelta / $Sc, 2) +
-            pow($HpDelta / $Sh, 2) +
+            ($LpDelta / $Sl) ** 2 +
+            ($CpDelta / $Sc) ** 2 +
+            ($HpDelta / $Sh) ** 2 +
             $Rt * ($CpDelta / $Sc) * ($HpDelta / $Sh)
         );
     }
@@ -225,7 +226,7 @@ class ColorExtractor
 
         return $value <= .03928 ?
             $value / 12.92 :
-            pow(($value + .055) / 1.055, 2.4);
+            (($value + .055) / 1.055) ** 2.4;
     }
 
     /**
@@ -263,7 +264,7 @@ class ColorExtractor
      */
     protected static function xyzToLabStep($value)
     {
-        return $value > 216 / 24389 ? pow($value, 1 / 3) : 841 * $value / 108 + 4 / 29;
+        return $value > 216 / 24389 ? $value ** (1 / 3) : 841 * $value / 108 + 4 / 29;
     }
 
     /**
