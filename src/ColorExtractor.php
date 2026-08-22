@@ -137,8 +137,14 @@ class ColorExtractor
         $C1p = sqrt(pow($a1p, 2) + pow($firstLabColor['b'], 2));
         $C2p = sqrt(pow($a2p, 2) + pow($secondLabColor['b'], 2));
 
-        $h1p = $a1p == 0 && $firstLabColor['b'] == 0 ? 0 : atan2($firstLabColor['b'], $a1p);
-        $h2p = $a2p == 0 && $secondLabColor['b'] == 0 ? 0 : atan2($secondLabColor['b'], $a2p);
+        $h1p = rad2deg(atan2($firstLabColor['b'], $a1p));
+        if ($h1p < 0) {
+            $h1p += 360;
+        }
+        $h2p = rad2deg(atan2($secondLabColor['b'], $a2p));
+        if ($h2p < 0) {
+            $h2p += 360;
+        }
 
         $LpDelta = $secondLabColor['L'] - $firstLabColor['L'];
         $CpDelta = $C2p - $C1p;
@@ -153,7 +159,7 @@ class ColorExtractor
             $hpDelta = $h2p - $h1p + 360;
         }
 
-        $HpDelta = 2 * sqrt($C1p * $C2p) * sin($hpDelta / 2);
+        $HpDelta = 2 * sqrt($C1p * $C2p) * sin(deg2rad($hpDelta / 2));
 
         $Lbp = ($firstLabColor['L'] + $secondLabColor['L']) / 2;
         $Cbp = ($C1p + $C2p) / 2;
@@ -168,7 +174,7 @@ class ColorExtractor
             $hbp = ($h1p + $h2p - 360) / 2;
         }
 
-        $T = 1 - .17 * cos($hbp - 30) + .24 * cos(2 * $hbp) + .32 * cos(3 * $hbp + 6) - .2 * cos(4 * $hbp - 63);
+        $T = 1 - .17 * cos(deg2rad($hbp - 30)) + .24 * cos(deg2rad(2 * $hbp)) + .32 * cos(deg2rad(3 * $hbp + 6)) - .2 * cos(deg2rad(4 * $hbp - 63));
 
         $sigmaDelta = 30 * exp(-pow(($hbp - 275) / 25, 2));
 
@@ -178,7 +184,7 @@ class ColorExtractor
         $Sc = 1 + .045 * $Cbp;
         $Sh = 1 + .015 * $Cbp * $T;
 
-        $Rt = -sin(2 * $sigmaDelta) * $Rc;
+        $Rt = -sin(deg2rad(2 * $sigmaDelta)) * $Rc;
 
         return sqrt(
             pow($LpDelta / $Sl, 2) +
