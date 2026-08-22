@@ -11,8 +11,6 @@ use PHPUnit\Framework\TestCase;
 final class ColorExtractorTest extends TestCase
 {
     /**
-     * @param string $imagePath
-     * @param int    $colorCount
      * @param array<int, int> $expectedColors
      *
      * @dataProvider dataForTestExtract
@@ -28,13 +26,13 @@ final class ColorExtractorTest extends TestCase
 
     public function dataForTestExtract(): iterable
     {
-        yield [__DIR__ . '/assets/google.png', 0, []];
-        yield [__DIR__ . '/assets/google.png', 1, [18417]];
-        yield [__DIR__ . '/assets/google.png', 2, [18417, 42259]];
-        yield [__DIR__ . '/assets/google.png', 3, [18417, 15080241, 42259]];
-        yield [__DIR__ . '/assets/google.png', 4, [18417, 15080241, 42259, 16360960]];
-        yield [__DIR__ . '/assets/google.png', 5, [18417, 15080241, 42259, 16360960, 4753405]];
-        yield [__DIR__ . '/assets/empty.png', 0, []];
-        yield [__DIR__ . '/assets/empty.png', 1, []];
+        yield [__DIR__.'/assets/google.png', 0, []];
+        yield [__DIR__.'/assets/google.png', 1, [18417]];
+        yield [__DIR__.'/assets/google.png', 2, [18417, 42259]];
+        yield [__DIR__.'/assets/google.png', 3, [18417, 15080241, 42259]];
+        yield [__DIR__.'/assets/google.png', 4, [18417, 15080241, 42259, 16360960]];
+        yield [__DIR__.'/assets/google.png', 5, [18417, 15080241, 42259, 16360960, 4753405]];
+        yield [__DIR__.'/assets/empty.png', 0, []];
+        yield [__DIR__.'/assets/empty.png', 1, []];
     }
 }

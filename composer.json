@@ -32,13 +32,5 @@
         "psr-4": {
             "League\\ColorExtractor\\Tests\\": "tests"
         }
-    },
-    "scripts": {
-        "test": [
-            "mkdir --parents .phpunit",
-            "composer require --dev --no-interaction --no-ansi --no-cache --update-with-all-dependencies --classmap-authoritative --working-dir=.phpunit phpunit/phpunit 9.6.36",
-            "composer dump-autoload",
-            ".phpunit/vendor/bin/phpunit"
-        ]
     }
 }

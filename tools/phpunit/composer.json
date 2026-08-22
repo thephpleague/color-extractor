@@ -1,0 +1,9 @@
+{
+    "require-dev": {
+        "phpunit/phpunit": "9.6.36"
+    },
+    "config": {
+        "bin-dir": "../../vendor/bin",
+        "optimize-autoloader": true
+    }
+}
