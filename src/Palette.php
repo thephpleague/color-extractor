@@ -50,6 +50,10 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromFilename(string $filename, ?int $backgroundColor = null): self
     {
+        if (!\extension_loaded('gd')) {
+            throw new \LogicException(sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
+        }
+
         $contents = @file_get_contents($filename);
         if (false === $contents) {
             throw new \InvalidArgumentException(sprintf('Failed to read "%s"', $filename));
@@ -63,6 +67,10 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromUrl(string $url, ?int $backgroundColor = null): self
     {
+        if (!\extension_loaded('gd')) {
+            throw new \LogicException(sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
+        }
+
         if (!\function_exists('curl_init')) {
             return self::fromFilename($url, $backgroundColor);
         }
@@ -89,6 +97,10 @@ class Palette implements \Countable, \IteratorAggregate
      */
     public static function fromContents(string $contents, ?int $backgroundColor = null): self
     {
+        if (!\extension_loaded('gd')) {
+            throw new \LogicException(sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
+        }
+
         $image = imagecreatefromstring($contents);
         if (false === $image) {
             throw new \RuntimeException('Failed to load image');
@@ -112,7 +124,7 @@ class Palette implements \Countable, \IteratorAggregate
         if (!$image instanceof \GdImage && (!\is_resource($image) || 'gd' !== get_resource_type($image))) {
             throw new \InvalidArgumentException('Image must be a gd resource');
         }
-        if (null !== $backgroundColor && (!is_numeric($backgroundColor) || $backgroundColor < 0 || $backgroundColor > 16777215)) {
+        if (null !== $backgroundColor && ($backgroundColor < 0 || $backgroundColor > 16777215)) {
             throw new \InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
         }
 
@@ -121,7 +133,6 @@ class Palette implements \Countable, \IteratorAggregate
         $areColorsIndexed = !imageistruecolor($image);
         $imageWidth = imagesx($image);
         $imageHeight = imagesy($image);
-        $palette->colors = [];
 
         $backgroundColorRed = ($backgroundColor >> 16) & 0xFF;
         $backgroundColorGreen = ($backgroundColor >> 8) & 0xFF;
@@ -141,22 +152,72 @@ class Palette implements \Countable, \IteratorAggregate
                              ($colorComponents['blue']);
                 }
 
-                if ($alpha = $color >> 24) {
+                if ($transparency = $color >> 24) {
                     if (null === $backgroundColor) {
                         continue;
                     }
 
-                    $alpha /= 127;
-                    $color = (int) (($color >> 16 & 0xFF) * (1 - $alpha) + $backgroundColorRed * $alpha) * 65536 +
-                             (int) (($color >> 8 & 0xFF) * (1 - $alpha) + $backgroundColorGreen * $alpha) * 256 +
-                             (int) (($color & 0xFF) * (1 - $alpha) + $backgroundColorBlue * $alpha);
+                    $transparency /= 127;
+                    $color = (int) (($color >> 16 & 0xFF) * (1 - $transparency) + $backgroundColorRed * $transparency) * 65536 +
+                             (int) (($color >> 8 & 0xFF) * (1 - $transparency) + $backgroundColorGreen * $transparency) * 256 +
+                             (int) (($color & 0xFF) * (1 - $transparency) + $backgroundColorBlue * $transparency);
                 }
 
                 /** @var IntColor $color */
-                isset($palette->colors[$color]) ?
-                    ++$palette->colors[$color] :
-                    $palette->colors[$color] = 1;
+                isset($palette->colors[$color])
+                    ? ++$palette->colors[$color]
+                    : $palette->colors[$color] = 1
+                ;
             }
+        }
+
+        arsort($palette->colors);
+
+        return $palette;
+    }
+
+    public static function fromImagick(\Imagick $image, ?int $backgroundColor = null): self
+    {
+        if (null !== $backgroundColor && ($backgroundColor < 0 || $backgroundColor > 16777215)) {
+            throw new \InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
+        }
+
+        $palette = new self();
+
+        if (1 !== $image->count()) {
+            $image->rewind();
+            $image = $image->current();
+        }
+
+        $backgroundColorRed = ($backgroundColor >> 16) & 0xFF;
+        $backgroundColorGreen = ($backgroundColor >> 8) & 0xFF;
+        $backgroundColorBlue = $backgroundColor & 0xFF;
+
+        /** @var \ImagickPixel $pixel */
+        foreach ($image->getImageHistogram() as $pixel) {
+            $components = $pixel->getColor(2);
+            $color = Color::fromRgbToInt($components);
+
+            $opacity = $components['a'];
+            if (255 !== $components['a']) {
+                if (null === $backgroundColor) {
+                    continue;
+                }
+
+                $opacity /= 255;
+                $color = (int) (($color >> 16 & 0xFF) * $opacity + $backgroundColorRed * (1 - $opacity)) * 65536 +
+                    (int) (($color >> 8 & 0xFF) * $opacity + $backgroundColorGreen * (1 - $opacity)) * 256 +
+                    (int) (($color & 0xFF) * $opacity + $backgroundColorBlue * (1 - $opacity));
+            }
+
+            /** @var IntColor $color */
+            /** @var positive-int $colorCount */
+            $colorCount = $pixel->getColorCount();
+
+            isset($palette->colors[$color])
+                ? $palette->colors[$color] += $colorCount
+                : $palette->colors[$color] = $colorCount
+            ;
         }
 
         arsort($palette->colors);

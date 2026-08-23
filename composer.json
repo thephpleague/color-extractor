@@ -17,11 +17,12 @@
         }
     ],
     "require": {
-        "php": "^7.3 || ^8.0",
-        "ext-gd": "*"
+        "php": "^7.3 || ^8.0"
     },
     "suggest": {
-        "ext-curl": "To download images from remote URLs if allow_url_fopen is disabled for security reasons"
+        "ext-curl": "To download images from remote URLs if allow_url_fopen is disabled for security reasons",
+        "ext-gd": "To load images using GD",
+        "ext-imagick": "To load images using Imagick"
     },
     "autoload": {
         "psr-4": {

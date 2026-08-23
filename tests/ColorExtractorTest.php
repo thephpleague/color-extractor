@@ -11,11 +11,25 @@ use PHPUnit\Framework\TestCase;
 final class ColorExtractorTest extends TestCase
 {
     /**
+     * @requires extension gd
+     *
      * @dataProvider dataForTestExtract
      */
-    public function testExtract(string $imagePath, int $colorCount, array $expectedColors): void
+    public function testExtractUsingGd(string $imagePath, int $colorCount, array $expectedColors): void
     {
-        $extractor = new ColorExtractor(Palette::fromFilename($imagePath));
+        $extractor = new ColorExtractor(Palette::fromGD(imagecreatefromstring(file_get_contents($imagePath))));
+
+        $this->assertSame($expectedColors, $extractor->extract($colorCount));
+    }
+
+    /**
+     * @requires extension imagick
+     *
+     * @dataProvider dataForTestExtract
+     */
+    public function testExtractUsingImagick(string $imagePath, int $colorCount, array $expectedColors): void
+    {
+        $extractor = new ColorExtractor(Palette::fromImagick(new \Imagick($imagePath)));
 
         $this->assertSame($expectedColors, $extractor->extract($colorCount));
     }

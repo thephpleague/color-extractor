@@ -10,15 +10,56 @@ use PHPUnit\Framework\TestCase;
 
 class PaletteTest extends TestCase
 {
-    public function testTransparencyHandling(): void
+    /**
+     * @requires extension gd
+     *
+     * @dataProvider provideImages
+     */
+    public function testPaletteUsingGd(string $filename, array $expectedColors, ?int $backgroundColor = null): void
     {
-        $imagePath = __DIR__.'/assets/red-transparent-50.png';
-        $this->assertCount(0, Palette::fromFilename($imagePath));
+        $this->assertSame($expectedColors, iterator_to_array(Palette::fromFilename($filename, $backgroundColor)));
+    }
 
-        $whiteBackgroundPalette = Palette::fromFilename($imagePath, Color::fromHexToInt('#FFFFFF'));
-        $this->assertSame([Color::fromHexToInt('#FF8080') => 1], iterator_to_array($whiteBackgroundPalette));
+    /**
+     * @requires extension imagick
+     *
+     * @dataProvider provideImages
+     */
+    public function testPaletteUsingImagick(string $filename, array $expectedColors, ?int $backgroundColor = null): void
+    {
+        $this->assertSame($expectedColors, iterator_to_array(Palette::fromImagick(new \Imagick($filename), $backgroundColor)));
+    }
 
-        $blackBackgroundPalette = Palette::fromFilename($imagePath, Color::fromHexToInt('#000000'));
-        $this->assertSame([Color::fromHexToInt('#7E0000') => 1], iterator_to_array($blackBackgroundPalette));
+    public static function provideImages(): iterable
+    {
+        yield 'Many colors' => [
+            __DIR__.'/assets/1x-black_3x-white.png',
+            [
+                Color::fromHexToInt('#FFFFFF') => 3,
+                Color::fromHexToInt('#000000') => 1,
+            ],
+        ];
+
+        yield 'Semi-transparent color without background' => [
+            __DIR__.'/assets/1x-red-75.png',
+            [],
+        ];
+
+        yield 'Semi-transparent color with background' => [
+            __DIR__.'/assets/1x-red-75.png',
+            [Color::fromHexToInt('#FF4040') => 1],
+            Color::fromHexToInt('#FFFFFF'),
+        ];
+
+        yield 'Many colors blending into one' => [
+            __DIR__.'/assets/1x-light-red_1x-red-75.png',
+            [Color::fromHexToInt('#FF4040') => 2],
+            Color::fromHexToInt('#FFFFFF'),
+        ];
+
+        yield 'Indexed color' => [
+            __DIR__.'/assets/1x-indexed-white.png',
+            [Color::fromHexToInt('#FFFFFF') => 1],
+        ];
     }
 }
