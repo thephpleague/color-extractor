@@ -1,0 +1,10 @@
+parameters:
+	ignoreErrors:
+			- "#^Parameter \\$image of method League\\\\ColorExtractor\\\\Palette::fromGD\\(\\) has invalid type GdImage\\.$#"
+			- "#^Parameter \\#1 \\$im\\S* of function image\\S+ expects (GdImage|resource), GdImage\\|resource given\\.$#"
+			- "#^Class GdImage not found\\.$#"
+	level: max
+	paths:
+		- src
+	reportUnmatchedIgnoredErrors: false
+	treatPhpDocTypesAsCertain: false

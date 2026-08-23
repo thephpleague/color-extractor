@@ -4,35 +4,38 @@ declare(strict_types=1);
 
 namespace League\ColorExtractor;
 
+/**
+ * @phpstan-type IntColor int<0, 16777215>
+ * @phpstan-type RgbColor array{r: int<0, 255>, g: int<0, 255>, b: int<0, 255>}
+ */
 class Color
 {
     /**
-     * @param int  $color
-     * @param bool $prependHash = true
-     *
-     * @return string
+     * @param IntColor $color
      */
-    public static function fromIntToHex($color, $prependHash = true)
+    public static function fromIntToHex(int $color, bool $prependHash = true): string
     {
         return ($prependHash ? '#' : '').sprintf('%06X', $color);
     }
 
     /**
-     * @param string $color
-     *
-     * @return int
+     * @return IntColor
      */
-    public static function fromHexToInt($color)
+    public static function fromHexToInt(string $color): int
     {
-        return hexdec(ltrim($color, '#'));
+        /** @var int<0, max> $intColor */
+        $intColor = hexdec(ltrim($color, '#'));
+        if ($intColor > 16777215) {
+            throw new \DomainException('Only 24-bit colors are supported');
+        }
+
+        return $intColor;
     }
 
     /**
-     * @param int $color
-     *
-     * @return array
+     * @return RgbColor
      */
-    public static function fromIntToRgb($color)
+    public static function fromIntToRgb(int $color): array
     {
         return [
             'r' => $color >> 16 & 0xFF,
@@ -42,9 +45,11 @@ class Color
     }
 
     /**
-     * @return int
+     * @param RgbColor $components
+     *
+     * @return IntColor
      */
-    public static function fromRgbToInt(array $components)
+    public static function fromRgbToInt(array $components): int
     {
         return ($components['r'] * 65536) + ($components['g'] * 256) + ($components['b']);
     }

@@ -11,8 +11,6 @@ use PHPUnit\Framework\TestCase;
 final class ColorExtractorTest extends TestCase
 {
     /**
-     * @param array<int, int> $expectedColors
-     *
      * @dataProvider dataForTestExtract
      */
     public function testExtract(string $imagePath, int $colorCount, array $expectedColors): void
