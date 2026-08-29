@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace League\ColorExtractor\Tests;
 
 use League\ColorExtractor\Color;

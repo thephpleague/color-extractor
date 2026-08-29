@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace League\ColorExtractor;
 
 /**
@@ -15,7 +13,7 @@ class Color
      */
     public static function fromIntToHex(int $color, bool $prependHash = true): string
     {
-        return ($prependHash ? '#' : '').sprintf('%06X', $color);
+        return ($prependHash ? '#' : '').\sprintf('%06X', $color);
     }
 
     /**
@@ -51,6 +49,6 @@ class Color
      */
     public static function fromRgbToInt(array $components): int
     {
-        return ($components['r'] * 65536) + ($components['g'] * 256) + ($components['b']);
+        return ($components['r'] * 65536) + ($components['g'] * 256) + $components['b'];
     }
 }

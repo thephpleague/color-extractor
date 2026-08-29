@@ -9,8 +9,8 @@ return (new PhpCsFixer\Config())
     ->setFinder($finder)
     ->setRiskyAllowed(true)
     ->setRules([
-        '@PHP71Migration:risky' => true,
-        '@PHP73Migration' => true,
+        '@PHP7x4Migration' => true,
+        '@PHP7x4Migration:risky' => true,
         '@Symfony' => true,
         '@Symfony:risky' => true,
 
