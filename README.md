@@ -24,7 +24,11 @@ use League\ColorExtractor\Color;
 use League\ColorExtractor\ColorExtractor;
 use League\ColorExtractor\Palette;
 
+// this will load the image using GD
 $palette = Palette::fromFilename('./some/image.png');
+
+// you can use Imagick if you prefer
+// $palette = Palette::fromImagick(new \Imagick('./some/image.png'));
 
 // $palette is an iterator on colors sorted by pixel count
 foreach($palette as $color => $count) {

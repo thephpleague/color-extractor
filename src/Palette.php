@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace League\ColorExtractor;
 
 /**
@@ -12,7 +10,7 @@ namespace League\ColorExtractor;
 class Palette implements \Countable, \IteratorAggregate
 {
     /** @var array<IntColor, positive-int> */
-    protected $colors = [];
+    protected array $colors = [];
 
     #[\ReturnTypeWillChange]
     public function count(): int
@@ -51,24 +49,25 @@ class Palette implements \Countable, \IteratorAggregate
     public static function fromFilename(string $filename, ?int $backgroundColor = null): self
     {
         if (!\extension_loaded('gd')) {
-            throw new \LogicException(sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
+            throw new \LogicException(\sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
         }
 
         $contents = @file_get_contents($filename);
         if (false === $contents) {
-            throw new \InvalidArgumentException(sprintf('Failed to read "%s"', $filename));
+            throw new \InvalidArgumentException(\sprintf('Failed to read "%s"', $filename));
         }
 
         return self::fromContents($contents, $backgroundColor);
     }
 
     /**
-     * @param ?IntColor $backgroundColor
+     * @param non-empty-string $url
+     * @param ?IntColor        $backgroundColor
      */
     public static function fromUrl(string $url, ?int $backgroundColor = null): self
     {
         if (!\extension_loaded('gd')) {
-            throw new \LogicException(sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
+            throw new \LogicException(\sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
         }
 
         if (!\function_exists('curl_init')) {
@@ -98,7 +97,7 @@ class Palette implements \Countable, \IteratorAggregate
     public static function fromContents(string $contents, ?int $backgroundColor = null): self
     {
         if (!\extension_loaded('gd')) {
-            throw new \LogicException(sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
+            throw new \LogicException(\sprintf('"%s()" requires the "gd" extension, enable it or call "fromImagick()" instead.', __METHOD__));
         }
 
         $image = imagecreatefromstring($contents);
@@ -125,7 +124,7 @@ class Palette implements \Countable, \IteratorAggregate
             throw new \InvalidArgumentException('Image must be a gd resource');
         }
         if (null !== $backgroundColor && ($backgroundColor < 0 || $backgroundColor > 16777215)) {
-            throw new \InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
+            throw new \InvalidArgumentException(\sprintf('"%s" does not represent a valid color', $backgroundColor));
         }
 
         $palette = new self();
@@ -142,14 +141,14 @@ class Palette implements \Countable, \IteratorAggregate
             for ($y = 0; $y < $imageHeight; ++$y) {
                 $color = imagecolorat($image, $x, $y);
                 if (false === $color) {
-                    throw new \RuntimeException(sprintf('Failed to get color at %d, %d', $x, $y));
+                    throw new \RuntimeException(\sprintf('Failed to get color at %d, %d', $x, $y));
                 }
                 if ($areColorsIndexed) {
                     $colorComponents = imagecolorsforindex($image, $color);
                     $color = ($colorComponents['alpha'] * 16777216) +
                              ($colorComponents['red'] * 65536) +
                              ($colorComponents['green'] * 256) +
-                             ($colorComponents['blue']);
+                             $colorComponents['blue'];
                 }
 
                 if ($transparency = $color >> 24) {
@@ -179,7 +178,7 @@ class Palette implements \Countable, \IteratorAggregate
     public static function fromImagick(\Imagick $image, ?int $backgroundColor = null): self
     {
         if (null !== $backgroundColor && ($backgroundColor < 0 || $backgroundColor > 16777215)) {
-            throw new \InvalidArgumentException(sprintf('"%s" does not represent a valid color', $backgroundColor));
+            throw new \InvalidArgumentException(\sprintf('"%s" does not represent a valid color', $backgroundColor));
         }
 
         $palette = new self();

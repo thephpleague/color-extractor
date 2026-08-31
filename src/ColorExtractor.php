@@ -1,53 +1,25 @@
 <?php
 
-declare(strict_types=1);
-
 namespace League\ColorExtractor;
 
 /**
  * @phpstan-import-type IntColor from Color
+ *
  * @phpstan-type LabColor array{L: float, a: float, b: float}
  */
 class ColorExtractor
 {
-    /** @var Palette */
-    protected $palette;
+    protected Palette $palette;
 
     /** @var \SplFixedArray<IntColor> */
-    protected $sortedColors;
+    protected \SplFixedArray $sortedColors;
 
     public function __construct(Palette $palette)
     {
         $this->palette = $palette;
-    }
-
-    /**
-     * @param int<0, max> $colorCount
-     *
-     * @return list<IntColor>
-     */
-    public function extract(int $colorCount = 1): array
-    {
-        if (0 === $colorCount) {
-            return [];
-        }
-
-        if (!$this->isInitialized()) {
-            $this->initialize();
-        }
-
-        return self::mergeColors($this->sortedColors, $colorCount, 100 / $colorCount);
-    }
-
-    protected function isInitialized(): bool
-    {
-        return null !== $this->sortedColors;
-    }
-
-    protected function initialize(): void
-    {
-        $queue = new \SplPriorityQueue();
         $this->sortedColors = new \SplFixedArray(\count($this->palette));
+
+        $queue = new \SplPriorityQueue();
 
         $i = 0;
         foreach ($this->palette as $color => $count) {
@@ -67,6 +39,20 @@ class ColorExtractor
             $queue->next();
             ++$i;
         }
+    }
+
+    /**
+     * @param int<0, max> $colorCount
+     *
+     * @return list<IntColor>
+     */
+    public function extract(int $colorCount = 1): array
+    {
+        if (0 > $colorCount) {
+            throw new \DomainException('$colorCount must be positive.');
+        }
+
+        return $colorCount ? self::mergeColors($this->sortedColors, $colorCount, 100 / $colorCount) : [];
     }
 
     /**
@@ -96,6 +82,7 @@ class ColorExtractor
             $colorLab = self::intColorToLab($color);
 
             foreach ($mergedColors as $i => $mergedColor) {
+                // @phpstan-ignore argument.type ($labCache[$i] is guaranteed to be a LabColor)
                 if (self::ciede2000DeltaE($colorLab, $labCache[$i]) < $maxDelta) {
                     $hasColorBeenMerged = true;
                     break;
@@ -266,7 +253,7 @@ class ColorExtractor
      */
     protected static function xyzToLab(array $xyz): array
     {
-        //http://en.wikipedia.org/wiki/Illuminant_D65#Definition
+        // http://en.wikipedia.org/wiki/Illuminant_D65#Definition
         $Xn = .95047;
         $Yn = 1;
         $Zn = 1.08883;

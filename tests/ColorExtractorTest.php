@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace League\ColorExtractor\Tests;
 
 use League\ColorExtractor\ColorExtractor;
@@ -32,6 +30,15 @@ final class ColorExtractorTest extends TestCase
         $extractor = new ColorExtractor(Palette::fromImagick(new \Imagick($imagePath)));
 
         $this->assertSame($expectedColors, $extractor->extract($colorCount));
+    }
+
+    public function testNegativeColorCountCannotBeExtracted(): void
+    {
+        $extractor = new ColorExtractor($this->createStub(Palette::class));
+
+        $this->expectException(\DomainException::class);
+
+        $extractor->extract(-1);
     }
 
     public function dataForTestExtract(): iterable

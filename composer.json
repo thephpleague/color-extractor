@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": "^7.3 || ^8.0"
+        "php": "^7.4 || ^8.0"
     },
     "suggest": {
         "ext-curl": "To download images from remote URLs if allow_url_fopen is disabled for security reasons",
